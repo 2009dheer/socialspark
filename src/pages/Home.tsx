@@ -183,54 +183,7 @@ const Home = () => {
         </Card>
       </section>
 
-      {/* Features Grid Section */}
-      <section className="relative py-16 md:py-40 px-5 overflow-hidden">
-        {/* Background Elements */}
-        <div className="absolute inset-0 bg-neutral-950"></div>
-        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-        <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-        
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-16 md:mb-24">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-orange-400 mb-6">
-              <Zap size={16} />
-              <span>Our Core Services</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6">
-              Everything you need to <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-purple-500">Stand Out</span>
-            </h2>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {[
-              { id: 'influencer-marketing', name: 'Influencer Marketing', desc: 'Leverage voices that matter to drive authentic engagement.', icon: Heart, color: 'text-pink-400' },
-              { id: 'digital-marketing', name: 'Digital Marketing', desc: 'Comprehensive brand growth across all online ecosystems.', icon: Globe, color: 'text-blue-400' },
-              { id: 'performance-marketing', name: 'Performance Marketing', desc: 'ROI-focused campaigns that turn attention into revenue.', icon: TrendingUp, color: 'text-orange-400' },
-              { id: 'affiliate-marketing', name: 'Affiliate Marketing', desc: 'Scale a performance-based sales force for your brand.', icon: Share2, color: 'text-emerald-400' },
-              { id: 'content-creation', name: 'Content Creation', desc: 'High-impact production assets that command attention and convert.', icon: PenTool, color: 'text-purple-400' },
-              { id: 'branding-marketing', name: 'Branding + Marketing', desc: 'Where premium aesthetic identity meets exponential growth.', icon: Megaphone, color: 'text-rose-400' },
-              { id: 'personal-branding', name: 'Personal Branding', desc: 'Forge an unforgettable digital identity and build authority.', icon: User, color: 'text-yellow-400' }
-            ].map((srv, idx) => (
-              <div 
-                key={srv.id}
-                onClick={() => navigate(`/services/${srv.id}`)} 
-                className={`rounded-[2rem] bg-neutral-900/50 border border-white/10 p-6 sm:p-8 relative overflow-hidden group flex flex-col justify-between cursor-pointer hover:bg-neutral-900 transition-all duration-300 ${idx === 6 ? 'sm:col-span-2 lg:col-span-3 lg:flex-row lg:items-center lg:gap-8 justify-center' : ''}`}
-              >
-                <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className={`relative z-10 flex flex-col gap-4 ${idx === 6 ? 'lg:flex-row lg:items-center lg:gap-6' : ''}`}>
-                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                    <srv.icon size={24} className={`${srv.color} md:w-8 md:h-8`} />
-                  </div>
-                  <div>
-                    <h3 className="text-xl sm:text-2xl font-bold mb-2 group-hover:underline decoration-2 underline-offset-4">{srv.name}</h3>
-                    <p className="text-neutral-400 text-sm sm:text-base max-w-sm">{srv.desc}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Founder Section */}
       <section className="relative py-16 md:py-32 px-5 max-w-7xl mx-auto overflow-hidden">

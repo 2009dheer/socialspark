@@ -140,9 +140,12 @@ const Contact = () => {
                       className="w-full px-4 py-3 md:px-6 md:py-4 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 focus:border-pink-500/50 focus:outline-none transition-colors appearance-none text-xs md:text-base"
                     >
                       <option className="bg-neutral-900">Personal Branding</option>
-                      <option className="bg-neutral-900">Content Creation</option>
-                      <option className="bg-neutral-900">Viral Strategies</option>
+                      <option className="bg-neutral-900">Influencer Marketing</option>
+                      <option className="bg-neutral-900">Digital Marketing</option>
                       <option className="bg-neutral-900">Performance Marketing</option>
+                      <option className="bg-neutral-900">Affiliate Marketing</option>
+                      <option className="bg-neutral-900">Content Creation</option>
+                      <option className="bg-neutral-900">Branding + Marketing</option>
                       <option className="bg-neutral-900">Other Inquiry</option>
                     </select>
                     <div className="absolute right-4 md:right-5 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-500">
