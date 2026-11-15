@@ -3,6 +3,7 @@ import { Play, X, ChevronRight, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 const RAW_URLS = [
+  'https://youtube.com/shorts/VUYbYIiv8e8',
   'https://youtube.com/shorts/0pjdMpqeaAM',
   'https://youtube.com/shorts/VFTPZwFPVtQ',
   'https://youtube.com/shorts/sexmpLa6sMw',

@@ -170,7 +170,7 @@ const Footer = () => {
             <li>
               <div className="flex items-start gap-2">
                 <Zap size={16} className="text-blue-400 mt-1 shrink-0" />
-                <span>Rohtak, Haryana,<br/>India</span>
+                <span>Delhi,<br/>India</span>
               </div>
             </li>
             <li>

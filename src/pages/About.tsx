@@ -73,9 +73,6 @@ const About = () => {
                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
                  
                  <div className="absolute bottom-6 md:bottom-10 left-6 md:left-10 right-6 md:right-10">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white text-xs font-bold uppercase tracking-widest mb-3">
-                      <Target size={12} className="text-orange-400" /> 17 Years Old
-                    </div>
                     <h3 className="text-3xl md:text-4xl font-extrabold text-white mb-1">Saiyam Dang</h3>
                     <p className="text-orange-400 font-medium text-lg">Founder & Visionary</p>
                  </div>
@@ -85,7 +82,7 @@ const About = () => {
             <div className="w-full md:w-1/2">
               <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight">Meet the <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-purple-500">Founder</span></h2>
               <p className="text-neutral-300 text-lg md:text-xl leading-relaxed mb-6">
-                Age is just a number. <strong className="text-white">Vision is what changes the world.</strong> At 17, Saiyam Dang recognized a widening gap in how brands and individuals scale their digital presence in an algorithmic era.
+                <strong className="text-white">Vision is what changes the world.</strong> Saiyam Dang recognized a widening gap in how brands and individuals scale their digital presence in an algorithmic era.
               </p>
               <p className="text-neutral-400 text-base md:text-lg leading-relaxed mb-10">
                 Operating at the intersection of raw digital intuition and performance marketing, Saiyam built Social Spark to provide the exact strategies missing from traditional agencies. What started as an obsession with viral mechanics and systemic growth has transformed into an engine for building global authority.

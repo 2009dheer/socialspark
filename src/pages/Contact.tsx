@@ -81,13 +81,13 @@ const Contact = () => {
                   <p className="text-sm sm:text-base md:text-xl font-medium group-hover:text-purple-400 transition-colors">+91 99962 10648</p>
                 </div>
               </a>
-              <a href="https://maps.google.com/?q=Rohtak,+Haryana" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 md:gap-6 group bg-neutral-900/30 md:bg-transparent p-3 md:p-0 rounded-xl md:rounded-none border border-white/5 md:border-transparent cursor-pointer">
+              <a href="https://maps.google.com/?q=Delhi,+India" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 md:gap-6 group bg-neutral-900/30 md:bg-transparent p-3 md:p-0 rounded-xl md:rounded-none border border-white/5 md:border-transparent cursor-pointer">
                 <div className="w-10 h-10 md:w-14 md:h-14 rounded-lg md:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-pink-500/50 transition-colors shrink-0">
                   <MapPin className="text-pink-400 w-4 h-4 md:w-6 md:h-6" />
                 </div>
                 <div>
                   <p className="text-neutral-500 text-[10px] md:text-sm mb-0 md:mb-1">Visit our matrix</p>
-                  <p className="text-sm sm:text-base md:text-xl font-medium group-hover:text-pink-400 transition-colors">Rohtak, Haryana (Global Operations)</p>
+                  <p className="text-sm sm:text-base md:text-xl font-medium group-hover:text-pink-400 transition-colors">Delhi, India (Global Operations)</p>
                 </div>
               </a>
             </motion.div>
