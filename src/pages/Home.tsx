@@ -1,248 +1,424 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowUpRight, Sparkles, Zap, Globe, Cpu, TrendingUp, Users, Rocket, Heart, Share2, PenTool, Megaphone, User, Target } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowUpRight, ArrowRight, Play, Sparkles, CheckCircle2, Flame } from 'lucide-react';
 import { motion } from 'motion/react';
-import { Card } from '../components/ui/card';
-import { Spotlight } from '../components/ui/spotlight';
-
 import VideoPortfolio from '../components/VideoPortfolio';
+import { ContainerScroll } from '../components/ui/container-scroll-animation';
+import { DashboardMockup } from '../components/ui/DashboardMockup';
+import {
+  KineticLine,
+  KineticReveal,
+  VelocityMarquee,
+  TiltSpotlightCard,
+  MagneticButton,
+} from '../components/motion/MotionPrimitives';
+import { SERVICES_DATA } from '../data/servicesData';
 
 const Home = () => {
-  const navigate = useNavigate();
+  const [activeCapIndex, setActiveCapIndex] = useState(0);
+  const activeService = SERVICES_DATA[activeCapIndex];
+
+  const scrollToShowcase = () => {
+    const el = document.getElementById('showcase');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <>
-      {/* Hero Section */}
-      <main className="relative pt-24 pb-16 md:pt-48 md:pb-32 px-5 overflow-hidden">
-        <div className="hidden md:block absolute top-1/4 left-1/4 w-64 h-64 md:w-96 md:h-96 bg-orange-600/20 rounded-full blur-2xl md:blur-[120px] pointer-events-none md:mix-blend-screen"></div>
-        <div className="hidden md:block absolute bottom-0 right-1/4 w-80 h-80 md:w-[500px] md:h-[500px] bg-purple-600/10 rounded-full blur-2xl md:blur-[150px] pointer-events-none md:mix-blend-screen"></div>
+      {/* ============================================================
+          ACT I: IMMEDIATE KINETIC HERO (FRAME-1 RENDER, ZERO BLOCKING)
+         ============================================================ */}
+      <section className="relative min-h-[92vh] md:min-h-screen flex flex-col justify-between pt-28 md:pt-36 pb-10 px-5 md:px-10 max-w-7xl mx-auto">
+        {/* Top Metadata Strip */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.08] pb-5"
+        >
+          <div className="inline-flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-300">
+            <span className="w-2 h-2 rounded-full bg-[#FF5A1F] shadow-[0_0_12px_#FF5A1F]" />
+            <span>Delhi, India · Personal Branding &amp; Growth Studio</span>
+          </div>
+          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-500">
+            28.6139° N / 77.2090° E · Creative Performance
+          </div>
+        </motion.div>
 
-        <div className="max-w-7xl mx-auto flex flex-col items-center text-center relative z-10">
-          <motion.div 
+        {/* Hero Typography Stage */}
+        <div className="my-auto py-10 md:py-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+          <div className="lg:col-span-9">
+            <h1 className="font-display font-extrabold tracking-[-0.035em] leading-[0.94] text-[clamp(2.85rem,7.8vw,6.8rem)] uppercase text-[#F5F3EE]">
+              <KineticLine delay={0.04}>We Turn</KineticLine>
+              <KineticLine delay={0.12}>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB800] via-[#FF5A1F] to-[#FF2E93]">
+                  Attention
+                </span>{' '}
+                Into
+              </KineticLine>
+              <KineticLine delay={0.2}>Cultural Currency.</KineticLine>
+            </h1>
+          </div>
+
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 md:px-4 md:py-2 rounded-full bg-white/5 border border-white/10 text-[10px] md:text-sm font-medium text-orange-200 mb-6 md:mb-8 md:backdrop-blur-sm"
+            transition={{ duration: 0.7, delay: 0.28 }}
+            className="lg:col-span-3 flex flex-col gap-6 pb-2"
           >
-            <Sparkles size={14} className="text-orange-400" />
-            <span>Premium Personal Branding & Marketing Agency</span>
+            <p className="text-sm md:text-base text-neutral-300 leading-relaxed font-light">
+              Built in Delhi for ambitious founders and modern consumer brands. Short-form cinema, creator ecosystems, and paid media engineered to scale.
+            </p>
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-3">
+              <MagneticButton strength={0.22}>
+                <Link
+                  to="/contact"
+                  className="w-full px-6 py-3.5 rounded-full bg-[#F5F3EE] hover:bg-[#FF5A1F] text-black hover:text-white font-bold text-sm transition-colors flex items-center justify-between gap-3 shadow-xl"
+                >
+                  <span>Build Your Brand</span>
+                  <ArrowUpRight size={17} />
+                </Link>
+              </MagneticButton>
+              <button
+                type="button"
+                onClick={scrollToShowcase}
+                className="w-full px-6 py-3.5 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/15 text-white font-medium text-sm transition-colors flex items-center justify-between gap-3 backdrop-blur-md cursor-pointer"
+              >
+                <span>Watch Reels</span>
+                <Play size={14} className="fill-white" />
+              </button>
+            </div>
           </motion.div>
-          
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl tracking-normal md:tracking-wide leading-[1.1] mb-6 md:mb-8"
-          >
-            <span className="font-bebas font-normal text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-purple-500 animate-gradient-x pr-2 pb-1" style={{ backgroundSize: '200% 200%' }}>
-              Social Spark
+        </div>
+
+        {/* Bottom Fold Discipline Bar */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.35 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-white/[0.08]"
+        >
+          {[
+            { num: '01', label: 'Personal Branding', sub: 'Executive Authority' },
+            { num: '02', label: 'Viral Reels', sub: 'Motion & Storytelling' },
+            { num: '03', label: 'Creator Cohorts', sub: 'Influencer Campaigns' },
+            { num: '04', label: 'Paid Acquisition', sub: 'Creative-First ROAS' },
+          ].map((item) => (
+            <div key={item.num} className="flex items-start gap-3">
+              <span className="font-mono text-[11px] text-[#FF5A1F] mt-0.5">{item.num}</span>
+              <div>
+                <p className="font-display text-sm font-bold text-white">{item.label}</p>
+                <p className="text-xs text-neutral-500">{item.sub}</p>
+              </div>
+            </div>
+          ))}
+        </motion.div>
+      </section>
+
+      {/* ============================================================
+          ACT II: SCROLL-VELOCITY KINETIC MARQUEE
+         ============================================================ */}
+      <section className="relative py-8 md:py-12 border-y border-white/[0.07] bg-black/40 backdrop-blur-sm overflow-hidden">
+        <VelocityMarquee
+          items={[
+            'PERSONAL BRANDING',
+            'SHORT-FORM CINEMA',
+            'CREATOR CAMPAIGNS',
+            'PERFORMANCE ROAS',
+          ]}
+          baseVelocity={18}
+        />
+        <VelocityMarquee
+          items={[
+            'SOCIAL SPARK DELHI',
+            'HIGH-RETENTION HOOKS',
+            'CULTURAL AUTHORITY',
+            'OMNICHANNEL GROWTH',
+          ]}
+          baseVelocity={15}
+          reverse
+          outlined
+        />
+      </section>
+
+      {/* ============================================================
+          ACT III: 3D PERSPECTIVE SCROLL-UNFOLDING TELEMETRY STAGE
+         ============================================================ */}
+      <section className="relative">
+        <ContainerScroll
+          titleComponent={
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/10 font-mono text-[11px] uppercase tracking-[0.2em] text-[#FFB800]">
+                <Flame size={13} />
+                <span>Interactive Studio Deck</span>
+              </div>
+              <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white leading-[1.03]">
+                Creative Meets <br className="hidden sm:block" />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB800] via-[#FF5A1F] to-[#FF2E93]">
+                  Compounding Revenue
+                </span>
+              </h2>
+              <p className="text-neutral-400 text-sm md:text-lg max-w-xl mx-auto font-light">
+                Every edit, creator collab, and paid media dollar is tracked inside one clear attribution loop.
+              </p>
+            </div>
+          }
+        >
+          <DashboardMockup />
+        </ContainerScroll>
+      </section>
+
+      {/* ============================================================
+          ACT IV: INTERACTIVE CAPABILITIES INDEX (STICKY DOSSIER)
+         ============================================================ */}
+      <section className="relative py-20 md:py-32 px-5 md:px-10 max-w-7xl mx-auto border-t border-white/[0.07]">
+        <KineticReveal className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
+          <div>
+            <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#FF5A1F]">
+              Capabilities Index · 01 — 07
             </span>
-          </motion.h1>
-          
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="font-outfit text-lg md:text-xl text-neutral-300 max-w-lg mb-10 md:mb-12 leading-relaxed px-2 font-light tracking-wide"
+            <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mt-3">
+              How We Scale Brands
+            </h2>
+          </div>
+          <Link
+            to="/services"
+            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-neutral-300 hover:text-white border-b border-white/25 hover:border-[#FF5A1F] pb-1.5 transition-colors self-start md:self-auto"
           >
-            Ignite your brand. Scale your impact.
-          </motion.p>
+            <span>Explore Full Capabilities</span>
+            <ArrowRight size={14} />
+          </Link>
+        </KineticReveal>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="relative w-full max-w-4xl mx-auto px-4"
-          >
-            {/* Mobile & Tablet Layout: Tags beside buttons */}
-            <div className="flex flex-col items-center gap-6 relative">
-              {/* Decorative side elements for mobile to fill "empty space" */}
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 hidden sm:block lg:hidden opacity-50">
-                <div className="w-1 h-20 bg-gradient-to-b from-transparent via-orange-500 to-transparent rounded-full" />
-              </div>
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden sm:block lg:hidden opacity-50">
-                <div className="w-1 h-20 bg-gradient-to-b from-transparent via-purple-500 to-transparent rounded-full" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          {/* Interactive Index List */}
+          <div className="lg:col-span-7 divide-y divide-white/[0.08] border-y border-white/[0.08]">
+            {SERVICES_DATA.map((service, idx) => {
+              const isSelected = activeCapIndex === idx;
+              return (
+                <div
+                  key={service.id}
+                  onMouseEnter={() => setActiveCapIndex(idx)}
+                  onClick={() => setActiveCapIndex(idx)}
+                  className={`group py-5 md:py-6 px-3 md:px-4 cursor-pointer transition-all flex items-center justify-between gap-4 rounded-xl ${
+                    isSelected ? 'bg-white/[0.04]' : 'hover:bg-white/[0.02]'
+                  }`}
+                >
+                  <div className="flex items-center gap-4 md:gap-6">
+                    <span
+                      className={`font-mono text-xs transition-colors ${
+                        isSelected ? 'text-[#FF5A1F] font-bold' : 'text-neutral-500'
+                      }`}
+                    >
+                      {service.index}
+                    </span>
+                    <div>
+                      <h3
+                        className={`font-display text-xl sm:text-2xl md:text-3xl font-bold transition-colors ${
+                          isSelected ? 'text-white' : 'text-neutral-400 group-hover:text-neutral-200'
+                        }`}
+                      >
+                        {service.title}
+                      </h3>
+                      <p className="text-xs text-neutral-500 mt-0.5 md:hidden">{service.shortTag}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <span className="hidden md:inline font-mono text-[11px] uppercase tracking-wider text-neutral-500">
+                      {service.shortTag}
+                    </span>
+                    <Link
+                      to={`/services/${service.id}`}
+                      className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all ${
+                        isSelected
+                          ? 'bg-[#FF5A1F] border-[#FF5A1F] text-white rotate-0'
+                          : 'border-white/15 text-neutral-400 group-hover:border-white/40 group-hover:text-white'
+                      }`}
+                      aria-label={`View ${service.title}`}
+                    >
+                      <ArrowUpRight size={16} />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Sticky Live Dossier Card */}
+          <div className="lg:col-span-5 lg:sticky lg:top-28">
+            <TiltSpotlightCard
+              spotlightColor={`${activeService.accentHex}28`}
+              className="rounded-3xl bg-[#0B0B10]/90 border border-white/12 p-7 md:p-9 shadow-[0_24px_70px_rgba(0,0,0,0.7)]"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <span
+                  className={`px-3 py-1 rounded-full border font-mono text-[10px] uppercase tracking-widest ${activeService.badgeClass}`}
+                >
+                  {activeService.index} · {activeService.shortTag}
+                </span>
+                <Sparkles size={16} style={{ color: activeService.accentHex }} />
               </div>
 
-              {/* Mobile Tags Row */}
-              <div className="flex lg:hidden justify-center gap-2 flex-wrap max-w-md">
-                {['Influencer Marketing', 'Digital Marketing', 'Performance Marketing', 'Affiliate Marketing', 'Content Creation', 'Branding + Marketing', 'Personal Branding'].map((tag, i) => (
-                  <motion.span
-                    key={tag}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.4 + (i * 0.1) }}
-                    className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[8px] font-black text-neutral-400 uppercase tracking-tighter"
-                  >
-                    {tag}
-                  </motion.span>
+              <h3 className="font-display text-2xl md:text-3xl font-extrabold text-white mb-3">
+                {activeService.title}
+              </h3>
+              <p className="text-neutral-300 text-sm md:text-base leading-relaxed mb-6">
+                {activeService.description}
+              </p>
+
+              <div className="grid grid-cols-3 gap-2.5 mb-7 py-4 border-y border-white/[0.08]">
+                {activeService.outcomes.map((o) => (
+                  <div key={o.label}>
+                    <div className="font-display text-lg md:text-xl font-extrabold text-white">
+                      {o.metric}
+                    </div>
+                    <div className="font-mono text-[10px] text-neutral-500 uppercase mt-0.5">
+                      {o.label}
+                    </div>
+                  </div>
                 ))}
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto justify-center relative z-10">
-                {/* Mobile Side Accents (The "Utilised" space) */}
-                <div className="absolute -left-10 top-1/2 -translate-y-1/2 sm:hidden pointer-events-none flex flex-col items-center gap-4">
-                  <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 2, repeat: Infinity }}>
-                    <Zap size={20} className="text-orange-500" />
-                  </motion.div>
-                  <div className="w-px h-12 bg-gradient-to-b from-transparent via-orange-500/20 to-transparent" />
-                </div>
-                <div className="absolute -right-10 top-1/2 -translate-y-1/2 sm:hidden pointer-events-none flex flex-col items-center gap-4">
-                  <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }}>
-                    <Sparkles size={20} className="text-purple-500" />
-                  </motion.div>
-                  <div className="w-px h-12 bg-gradient-to-b from-transparent via-purple-500/20 to-transparent" />
-                </div>
+              <div className="space-y-2.5 mb-8">
+                {activeService.deliverables.slice(0, 3).map((item) => (
+                  <div key={item} className="flex items-center gap-2.5 text-sm text-neutral-300">
+                    <CheckCircle2 size={15} style={{ color: activeService.accentHex }} className="shrink-0" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
 
-                <Link to="/contact" className="w-full sm:w-auto px-10 py-4 rounded-full bg-gradient-to-r from-orange-500 to-purple-600 hover:from-orange-400 hover:to-purple-500 text-white font-bold text-base md:text-lg transition-all transform hover:scale-105 hover:shadow-[0_0_40px_rgba(249,115,22,0.4)] flex items-center justify-center gap-2 group">
-                  Build Your Brand
-                  <ArrowUpRight size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              <div className="flex items-center gap-3">
+                <Link
+                  to={`/services/${activeService.id}`}
+                  className="flex-1 py-3.5 px-5 rounded-full bg-white text-black hover:bg-[#FF5A1F] hover:text-white font-bold text-xs uppercase tracking-wider text-center transition-colors"
+                >
+                  Inspect Scope
                 </Link>
-                <Link to="/services" className="w-full sm:w-auto px-10 py-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold text-base md:text-lg transition-all flex items-center justify-center gap-2 md:backdrop-blur-sm">
-                  View Our Services
+                <Link
+                  to={`/contact?service=${encodeURIComponent(activeService.title)}`}
+                  className="py-3.5 px-5 rounded-full border border-white/15 hover:border-white/40 text-white font-semibold text-xs uppercase tracking-wider transition-colors"
+                >
+                  Enquire
                 </Link>
               </div>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="mt-16 md:mt-24 relative w-full max-w-[280px] sm:max-w-lg mx-auto flex justify-center group"
-          >
-            {/* Left Side Metrics (Desktop) */}
-            <div className="absolute -left-24 md:-left-40 top-1/2 -translate-y-1/2 hidden sm:flex flex-col gap-6 text-right pointer-events-none">
-              <div className="space-y-1">
-                <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-bold">Brand Authority</p>
-                <p className="text-sm font-mono text-orange-400">ESTABLISHED</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-bold">Audience Growth</p>
-                <p className="text-sm font-mono text-neutral-300">SCALING</p>
-              </div>
-            </div>
-
-            {/* Right Side Metrics (Desktop) */}
-            <div className="absolute -right-24 md:-right-40 top-1/2 -translate-y-1/2 hidden sm:flex flex-col gap-6 text-left pointer-events-none">
-              <div className="space-y-1">
-                <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-bold">Marketing ROI</p>
-                <p className="text-sm font-mono text-purple-400">MAXIMIZED</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-bold">Content Reach</p>
-                <p className="text-sm font-mono text-neutral-300">GLOBAL</p>
-              </div>
-            </div>
-
-            {/* Mobile Decorative Orbits */}
-            <div className="absolute inset-0 sm:hidden pointer-events-none">
-              <div className="absolute inset-[-20px] border border-white/5 rounded-full" />
-              <div className="absolute inset-[-40px] border border-white/5 rounded-full border-dashed" />
-            </div>
-
-            <div className="absolute inset-0 bg-gradient-to-b from-orange-500/20 to-purple-600/20 blur-2xl md:blur-[100px] rounded-full group-hover:opacity-70 transition-opacity duration-700"></div>
-            <div className="relative animate-float">
-              {/* Replaced expensive drop-shadow filter with a blurred background element */}
-              <div className="absolute inset-0 bg-orange-500/30 blur-xl md:blur-[30px] rounded-full scale-75"></div>
-              <img src="/logo.png" alt="Social Spark Logo" className="w-32 h-32 sm:w-48 sm:h-48 md:w-80 md:h-80 relative z-10 object-contain" />
-            </div>
-          </motion.div>
-        </div>
-      </main>
-
-      {/* Engine Section */}
-      <section className="relative py-16 px-5 max-w-7xl mx-auto">
-        <Card className="w-full min-h-[500px] bg-neutral-900/80 md:backdrop-blur-sm border-white/10 relative overflow-hidden rounded-[2rem] flex flex-col md:flex-row items-center">
-          <Spotlight
-            className="-top-40 left-0 md:left-60 md:-top-20"
-            fill="#F97316"
-          />
-          
-          {/* Text content */}
-          <div className="w-full md:w-1/2 p-8 sm:p-10 md:p-12 z-10 flex flex-col justify-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white/5 border border-white/10 text-xs md:text-sm font-medium text-orange-400 mb-4 md:mb-6 w-fit">
-              <Zap size={16} />
-              <span>Viral Content Engine</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-neutral-400 mb-3 md:mb-4 leading-tight">
-              Scale Your Brand <br className="hidden sm:block"/> Exponentially
-            </h2>
-            <p className="text-neutral-400 max-w-lg text-sm sm:text-base md:text-lg">
-              Supercharge your digital presence with data-driven content strategies. We deploy viral frameworks that optimize your content, engage your audience, and multiply your reach across all platforms.
-            </p>
-          </div>
-
-          {/* Logo image content */}
-          <div className="w-full md:w-1/2 flex items-center justify-center p-8 pt-0 md:p-8 pb-12 md:pb-8">
-            <img 
-              src="/logo.png" 
-              alt="Social Spark Logo" 
-              className="w-auto h-auto max-w-[65%] sm:max-w-[50%] md:max-w-[70%] lg:max-w-[350px] max-h-[250px] md:max-h-[350px] object-contain filter drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
-            />
-          </div>
-        </Card>
-      </section>
-
-
-
-      {/* Founder Section */}
-      <section className="relative py-16 md:py-32 px-5 max-w-7xl mx-auto overflow-hidden">
-        <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
-          <div className="w-full md:w-1/2 relative group">
-             {/* Decorative elements behind image */}
-             <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[105%] bg-gradient-to-br from-orange-500/30 to-purple-600/30 blur-[40px] md:blur-[80px] rounded-full opacity-70 group-hover:opacity-100 transition-opacity duration-700"></div>
-             
-             {/* Image container */}
-             <div className="relative rounded-[2rem] md:rounded-[3rem] overflow-hidden aspect-[4/5] sm:aspect-square md:aspect-[4/5] border border-white/10 bg-neutral-900 shadow-2xl">
-               <img src="/saiyam.png" alt="Saiyam Dang - Founder" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-               
-               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-               
-               <div className="absolute bottom-6 md:bottom-10 left-6 md:left-10 right-6 md:right-10">
-                  <h3 className="text-3xl md:text-4xl font-extrabold text-white mb-1">Saiyam Dang</h3>
-                  <p className="text-orange-400 font-medium text-lg">Founder & Visionary</p>
-               </div>
-             </div>
-          </div>
-          
-          <div className="w-full md:w-1/2">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight">Meet the <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-purple-500">Founder</span></h2>
-            <p className="text-neutral-300 text-lg md:text-xl leading-relaxed mb-6">
-              <strong className="text-white">Vision is what changes the world.</strong> Saiyam Dang recognized a widening gap in how brands and individuals scale their digital presence in an algorithmic era.
-            </p>
-            <p className="text-neutral-400 text-base md:text-lg leading-relaxed mb-10">
-              Operating at the intersection of raw digital intuition and performance marketing, Saiyam built Social Spark to provide the exact strategies missing from traditional agencies. What started as an obsession with viral mechanics and systemic growth has transformed into an engine for building global authority.
-            </p>
-            <div className="grid grid-cols-2 gap-4 md:gap-6">
-               <div className="bg-neutral-900/50 md:backdrop-blur-sm border border-white/10 rounded-2xl p-5 md:p-6 hover:bg-neutral-800/50 transition-colors">
-                 <div className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-500 mb-2">Gen-Z</div>
-                 <div className="text-neutral-500 text-xs md:text-sm font-bold uppercase tracking-wider">Perspective & Intuition</div>
-               </div>
-               <div className="bg-neutral-900/50 md:backdrop-blur-sm border border-white/10 rounded-2xl p-5 md:p-6 hover:bg-neutral-800/50 transition-colors">
-                 <div className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mb-2">Data</div>
-                 <div className="text-neutral-500 text-xs md:text-sm font-bold uppercase tracking-wider">Driven Execution</div>
-               </div>
-            </div>
+            </TiltSpotlightCard>
           </div>
         </div>
       </section>
 
-      {/* Video Portfolio Section */}
+      {/* ============================================================
+          ACT V: CAMPAIGN SHOWCASE (INSTANT POSTER + THEATRE LIGHTBOX)
+         ============================================================ */}
       <VideoPortfolio />
 
-      {/* CTA Section */}
-      <section className="relative py-16 md:py-32 px-5">
-        <div className="max-w-5xl mx-auto bg-neutral-900/60 md:backdrop-blur-2xl border border-white/10 rounded-[2rem] md:rounded-[3rem] p-8 md:p-20 text-center relative overflow-hidden">
-          <div className="hidden md:block absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-gradient-to-b from-orange-500/20 to-transparent blur-2xl md:blur-3xl pointer-events-none"></div>
-          
-          <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6 relative z-10">Ready to build your brand?</h2>
-          <p className="text-neutral-400 text-sm md:text-lg mb-8 md:mb-10 max-w-xl mx-auto relative z-10">
-            Join the elite circle of founders and executives who are leveraging our expertise to dominate their industries.
-          </p>
-          <Link to="/contact" className="inline-block px-8 md:px-10 py-4 md:py-5 rounded-full bg-gradient-to-r from-orange-500 to-purple-600 text-white font-bold text-base md:text-lg hover:from-orange-400 hover:to-purple-500 transition-colors shadow-[0_0_30px_rgba(249,115,22,0.3)] hover:shadow-[0_0_50px_rgba(249,115,22,0.5)] relative z-10">
-            Get Started Today
-          </Link>
+      {/* ============================================================
+          ACT VI: FOUNDER SPOTLIGHT (NO AGE REFERENCES)
+         ============================================================ */}
+      <section className="relative py-20 md:py-32 px-5 md:px-10 max-w-7xl mx-auto border-t border-white/[0.07]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <KineticReveal className="lg:col-span-5">
+            <TiltSpotlightCard
+              maxTilt={5}
+              spotlightColor="rgba(255, 90, 31, 0.2)"
+              className="rounded-[2rem] overflow-hidden border border-white/12 bg-[#0B0B10] shadow-2xl"
+            >
+              <div className="relative aspect-[4/5]">
+                <img
+                  src="/saiyam.jpg"
+                  alt="Saiyam Dang — Founder of Social Spark"
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#FFB800]">
+                    Delhi, India
+                  </span>
+                  <h3 className="font-display text-3xl font-extrabold text-white mt-1">
+                    Saiyam Dang
+                  </h3>
+                  <p className="text-neutral-300 text-sm">Founder &amp; Creative Director</p>
+                </div>
+              </div>
+            </TiltSpotlightCard>
+          </KineticReveal>
+
+          <KineticReveal delay={0.1} className="lg:col-span-7">
+            <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#FF5A1F]">
+              Leadership &amp; Ethos
+            </span>
+            <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mt-3 mb-6 leading-[1.04]">
+              Built for the{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB800] via-[#FF5A1F] to-[#FF2E93]">
+                Algorithmic Era
+              </span>
+            </h2>
+            <p className="text-neutral-200 text-lg md:text-xl leading-relaxed mb-5 font-light">
+              <strong className="text-white font-semibold">Vision is what changes the world.</strong>{' '}
+              Saiyam Dang recognized a widening gap in how brands and individuals scale their digital presence in a feed driven by short-form taste and speed.
+            </p>
+            <p className="text-neutral-400 text-base md:text-lg leading-relaxed mb-10">
+              Operating at the intersection of raw creative intuition and disciplined performance marketing, Social Spark was built to replace slow traditional agencies with agile storytelling, vetted creator networks, and measurable commercial growth.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-5">
+                <div className="font-display text-2xl font-extrabold text-[#FFB800] mb-1">
+                  Taste-Led Creative
+                </div>
+                <p className="text-neutral-400 text-sm">
+                  Platform-native hooks, motion design, and storytelling people actually share.
+                </p>
+              </div>
+              <div className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-5">
+                <div className="font-display text-2xl font-extrabold text-[#FF2E93] mb-1">
+                  Performance Discipline
+                </div>
+                <p className="text-neutral-400 text-sm">
+                  Creative testing paired with attribution so attention converts into pipeline.
+                </p>
+              </div>
+            </div>
+          </KineticReveal>
         </div>
+      </section>
+
+      {/* ============================================================
+          ACT VII: CLOSING EDITORIAL CTA
+         ============================================================ */}
+      <section className="relative py-16 md:py-28 px-5 md:px-10 max-w-7xl mx-auto">
+        <KineticReveal>
+          <div className="relative rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-white/15 bg-gradient-to-br from-[#131018] via-[#0B0B10] to-[#120A08] p-8 sm:p-14 md:p-20 text-center">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.05] border border-white/10 font-mono text-[11px] uppercase tracking-[0.2em] text-[#FFB800] mb-6">
+              Ready When You Are
+            </div>
+            <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white max-w-3xl mx-auto leading-[1.03] mb-6">
+              Let&apos;s Turn Your Next Campaign Into Category Dominance.
+            </h2>
+            <p className="text-neutral-400 text-sm sm:text-base md:text-lg max-w-xl mx-auto mb-10 font-light">
+              Work directly with our Delhi studio team on personal branding, short-form production, creators, and paid scaling.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <MagneticButton strength={0.25}>
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-[#FF5A1F] hover:bg-[#ff6d38] text-white font-bold text-sm md:text-base transition-all shadow-[0_0_40px_rgba(255,90,31,0.4)]"
+                >
+                  <span>Start a Project</span>
+                  <ArrowUpRight size={18} />
+                </Link>
+              </MagneticButton>
+              <Link
+                to="/about"
+                className="px-8 py-4 rounded-full border border-white/15 hover:border-white/35 text-white font-medium text-sm md:text-base transition-colors"
+              >
+                About Social Spark
+              </Link>
+            </div>
+          </div>
+        </KineticReveal>
       </section>
     </>
   );

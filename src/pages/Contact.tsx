@@ -1,177 +1,254 @@
-import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send, ChevronRight } from 'lucide-react';
-import { motion } from 'motion/react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Mail, Phone, MapPin, Send, ArrowUpRight } from 'lucide-react';
+import { SERVICES_DATA } from '../data/servicesData';
+import { KineticLine, TiltSpotlightCard, MagneticButton } from '../components/motion/MotionPrimitives';
+
+const SERVICE_OPTIONS = [...SERVICES_DATA.map((s) => s.title), 'Other Inquiry'];
 
 const Contact = () => {
+  const [searchParams] = useSearchParams();
+  const initialService = searchParams.get('service');
+  const matchedService =
+    initialService && SERVICE_OPTIONS.includes(initialService)
+      ? initialService
+      : 'Personal Branding';
+
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    subject: 'Personal Branding',
-    message: ''
+    subject: matchedService,
+    message: '',
   });
+
+  useEffect(() => {
+    if (initialService && SERVICE_OPTIONS.includes(initialService)) {
+      setFormData((prev) => ({ ...prev, subject: initialService }));
+    }
+  }, [initialService]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Construct WhatsApp message
-    const whatsappNumber = "919996210648";
-    const text = `*New Inquiry from Social Spark*%0A%0A*Name:* ${formData.name}%0A*Email:* ${formData.email}%0A*Subject:* ${formData.subject}%0A*Message:* ${formData.message}`;
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${text}`;
-    
-    // Redirect to WhatsApp (using location.href to prevent mobile popup blockers)
+
+    const whatsappNumber = '919996210648';
+    const rawMessage = [
+      '*New Inquiry from Social Spark*',
+      '',
+      `*Name:* ${formData.name.trim()}`,
+      `*Email:* ${formData.email.trim()}`,
+      `*Capability:* ${formData.subject}`,
+      `*Brief:* ${formData.message.trim()}`,
+    ].join('\n');
+
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(rawMessage)}`;
     window.location.href = whatsappUrl;
-    
+
     setIsSubmitted(true);
     setTimeout(() => setIsSubmitted(false), 5000);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <section className="relative pb-12 md:pb-24 px-4 md:px-5 bg-neutral-950 min-h-screen pt-20 md:pt-40 overflow-hidden">
-      {/* Background Elements */}
-      <div className="hidden md:block absolute top-1/3 left-0 w-full md:w-1/2 h-96 bg-purple-600/10 blur-[80px] pointer-events-none"></div>
-      <div className="hidden md:block absolute bottom-0 right-0 w-full md:w-1/2 h-96 bg-orange-600/10 blur-[80px] pointer-events-none"></div>
-
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-          <div>
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-8"
-            >
-              Let's Spark <br className="hidden sm:block" /> Something.
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-              className="text-sm sm:text-base md:text-xl text-neutral-400 mb-8 md:mb-12 leading-relaxed max-w-lg"
-            >
-              Ready to take your brand to the next level? Our team of engineers and strategists are ready to initialize your growth sequence.
-            </motion.p>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-              className="space-y-3 md:space-y-8 mb-10 lg:mb-0"
-            >
-              <a href="mailto:newsocialspark@gmail.com" className="flex items-center gap-3 md:gap-6 group bg-neutral-900/30 md:bg-transparent p-3 md:p-0 rounded-xl md:rounded-none border border-white/5 md:border-transparent cursor-pointer">
-                <div className="w-10 h-10 md:w-14 md:h-14 rounded-lg md:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-orange-500/50 transition-colors shrink-0">
-                  <Mail className="text-orange-400 w-4 h-4 md:w-6 md:h-6" />
-                </div>
-                <div>
-                  <p className="text-neutral-500 text-[10px] md:text-sm mb-0 md:mb-1">Email us at</p>
-                  <p className="text-sm sm:text-base md:text-xl font-medium break-all group-hover:text-orange-400 transition-colors">newsocialspark@gmail.com</p>
-                </div>
-              </a>
-              <a href="tel:+919996210648" className="flex items-center gap-3 md:gap-6 group bg-neutral-900/30 md:bg-transparent p-3 md:p-0 rounded-xl md:rounded-none border border-white/5 md:border-transparent cursor-pointer">
-                <div className="w-10 h-10 md:w-14 md:h-14 rounded-lg md:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-purple-500/50 transition-colors shrink-0">
-                  <Phone className="text-purple-400 w-4 h-4 md:w-6 md:h-6" />
-                </div>
-                <div>
-                  <p className="text-neutral-500 text-[10px] md:text-sm mb-0 md:mb-1">Call us at</p>
-                  <p className="text-sm sm:text-base md:text-xl font-medium group-hover:text-purple-400 transition-colors">+91 99962 10648</p>
-                </div>
-              </a>
-              <a href="https://maps.google.com/?q=Delhi,+India" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 md:gap-6 group bg-neutral-900/30 md:bg-transparent p-3 md:p-0 rounded-xl md:rounded-none border border-white/5 md:border-transparent cursor-pointer">
-                <div className="w-10 h-10 md:w-14 md:h-14 rounded-lg md:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-pink-500/50 transition-colors shrink-0">
-                  <MapPin className="text-pink-400 w-4 h-4 md:w-6 md:h-6" />
-                </div>
-                <div>
-                  <p className="text-neutral-500 text-[10px] md:text-sm mb-0 md:mb-1">Visit our matrix</p>
-                  <p className="text-sm sm:text-base md:text-xl font-medium group-hover:text-pink-400 transition-colors">Delhi, India (Global Operations)</p>
-                </div>
-              </a>
-            </motion.div>
+    <section className="relative pb-24 px-5 md:px-10 pt-28 md:pt-40 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        {/* Left Studio Desk */}
+        <div className="lg:col-span-5">
+          <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-[#FF5A1F] mb-5">
+            <span>Start A Project · Delhi Studio</span>
           </div>
 
-          <div className="bg-neutral-900/50 md:backdrop-blur-xl border border-white/10 rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-12 relative overflow-hidden">
-            {isSubmitted ? (
-              <div className="h-full flex flex-col items-center justify-center text-center py-20">
-                <div className="w-20 h-20 rounded-full bg-green-500/20 border border-green-500/50 flex items-center justify-center mb-6">
-                  <Send className="text-green-500" size={32} />
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-[-0.03em] text-white leading-[0.98] mb-6 uppercase">
+            <KineticLine delay={0.04}>Let&apos;s Spark</KineticLine>
+            <KineticLine delay={0.12}>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB800] via-[#FF5A1F] to-[#FF2E93]">
+                Something Iconic.
+              </span>
+            </KineticLine>
+          </h1>
+
+          <p className="text-neutral-300 text-base md:text-lg leading-relaxed mb-10 font-light">
+            Tell us what you&apos;re building. Our creative and performance team replies within 24 hours on WhatsApp and email.
+          </p>
+
+          <div className="space-y-4">
+            <a
+              href="mailto:newsocialspark@gmail.com"
+              className="flex items-center justify-between p-4 rounded-2xl bg-[#0B0B10]/90 border border-white/10 hover:border-[#FF5A1F]/50 transition-colors group"
+            >
+              <div className="flex items-center gap-4 min-w-0">
+                <div className="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0">
+                  <Mail className="text-[#FF5A1F]" size={18} />
                 </div>
-                <h3 className="text-2xl font-bold mb-2">Redirecting to WhatsApp...</h3>
-                <p className="text-neutral-400">Your message has been prepared. Please complete the send in WhatsApp.</p>
+                <div className="min-w-0">
+                  <p className="font-mono text-[10px] uppercase tracking-wider text-neutral-500">
+                    Email Studio
+                  </p>
+                  <p className="text-sm sm:text-base font-medium text-white truncate">
+                    newsocialspark@gmail.com
+                  </p>
+                </div>
+              </div>
+              <ArrowUpRight size={16} className="text-neutral-500 group-hover:text-white shrink-0" />
+            </a>
+
+            <a
+              href="tel:+919996210648"
+              className="flex items-center justify-between p-4 rounded-2xl bg-[#0B0B10]/90 border border-white/10 hover:border-[#FFB800]/50 transition-colors group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0">
+                  <Phone className="text-[#FFB800]" size={18} />
+                </div>
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-wider text-neutral-500">
+                    Direct Line
+                  </p>
+                  <p className="text-sm sm:text-base font-medium text-white">
+                    +91 99962 10648
+                  </p>
+                </div>
+              </div>
+              <ArrowUpRight size={16} className="text-neutral-500 group-hover:text-white shrink-0" />
+            </a>
+
+            <a
+              href="https://maps.google.com/?q=Delhi,+India"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between p-4 rounded-2xl bg-[#0B0B10]/90 border border-white/10 hover:border-[#FF2E93]/50 transition-colors group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0">
+                  <MapPin className="text-[#FF2E93]" size={18} />
+                </div>
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-wider text-neutral-500">
+                    Headquarters
+                  </p>
+                  <p className="text-sm sm:text-base font-medium text-white">
+                    Delhi, India (Global Operations)
+                  </p>
+                </div>
+              </div>
+              <ArrowUpRight size={16} className="text-neutral-500 group-hover:text-white shrink-0" />
+            </a>
+          </div>
+        </div>
+
+        {/* Right Interactive Inquiry Form */}
+        <div className="lg:col-span-7">
+          <TiltSpotlightCard
+            maxTilt={3}
+            spotlightColor="rgba(255, 90, 31, 0.16)"
+            className="rounded-[2rem] bg-[#0B0B10]/92 border border-white/12 p-6 sm:p-10 md:p-12 shadow-[0_25px_80px_rgba(0,0,0,0.75)]"
+          >
+            {isSubmitted ? (
+              <div className="flex flex-col items-center justify-center text-center py-20">
+                <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center mb-6">
+                  <Send className="text-emerald-400" size={26} />
+                </div>
+                <h2 className="font-display text-2xl font-bold text-white mb-2">
+                  Opening WhatsApp Studio...
+                </h2>
+                <p className="text-neutral-400 text-sm max-w-sm">
+                  Your project brief is pre-filled and ready. Tap Send in WhatsApp to connect directly.
+                </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-                  <div className="space-y-1.5 md:space-y-2">
-                    <label className="text-[10px] md:text-sm font-medium text-neutral-400 ml-1">Full Name</label>
-                    <input 
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="font-mono text-[11px] uppercase tracking-wider text-neutral-400 block">
+                      Full Name
+                    </label>
+                    <input
                       required
-                      type="text" 
+                      type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="John Doe"
-                      className="w-full px-4 py-3 md:px-6 md:py-4 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 focus:border-orange-500/50 focus:outline-none transition-colors text-xs md:text-base"
+                      placeholder="Your name"
+                      className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/12 focus:border-[#FF5A1F] focus:outline-none transition-colors text-sm text-white placeholder:text-neutral-600"
                     />
                   </div>
-                  <div className="space-y-1.5 md:space-y-2">
-                    <label className="text-[10px] md:text-sm font-medium text-neutral-400 ml-1">Email Address</label>
-                    <input 
+                  <div className="space-y-2">
+                    <label className="font-mono text-[11px] uppercase tracking-wider text-neutral-400 block">
+                      Email Address
+                    </label>
+                    <input
                       required
-                      type="email" 
+                      type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="john@example.com"
-                      className="w-full px-4 py-3 md:px-6 md:py-4 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 focus:border-purple-500/50 focus:outline-none transition-colors text-xs md:text-base"
+                      placeholder="you@company.com"
+                      className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/12 focus:border-[#FF5A1F] focus:outline-none transition-colors text-sm text-white placeholder:text-neutral-600"
                     />
                   </div>
                 </div>
-                <div className="space-y-1.5 md:space-y-2">
-                  <label className="text-[10px] md:text-sm font-medium text-neutral-400 ml-1">Subject</label>
-                  <div className="relative">
-                    <select 
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 md:px-6 md:py-4 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 focus:border-pink-500/50 focus:outline-none transition-colors appearance-none text-xs md:text-base"
-                    >
-                      <option className="bg-neutral-900">Personal Branding</option>
-                      <option className="bg-neutral-900">Influencer Marketing</option>
-                      <option className="bg-neutral-900">Digital Marketing</option>
-                      <option className="bg-neutral-900">Performance Marketing</option>
-                      <option className="bg-neutral-900">Affiliate Marketing</option>
-                      <option className="bg-neutral-900">Content Creation</option>
-                      <option className="bg-neutral-900">Branding + Marketing</option>
-                      <option className="bg-neutral-900">Other Inquiry</option>
-                    </select>
-                    <div className="absolute right-4 md:right-5 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-500">
-                      <ChevronRight size={16} className="rotate-90" />
-                    </div>
+
+                {/* All Services Interactive Selector Pills */}
+                <div className="space-y-2.5">
+                  <label className="font-mono text-[11px] uppercase tracking-wider text-neutral-400 block">
+                    Select Capability / Service
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {SERVICE_OPTIONS.map((serviceName) => {
+                      const active = formData.subject === serviceName;
+                      return (
+                        <button
+                          key={serviceName}
+                          type="button"
+                          onClick={() =>
+                            setFormData((prev) => ({ ...prev, subject: serviceName }))
+                          }
+                          className={`px-3.5 py-2 rounded-full text-xs font-medium transition-all cursor-pointer border ${
+                            active
+                              ? 'bg-[#FF5A1F] border-[#FF5A1F] text-white font-semibold shadow-[0_0_20px_rgba(255,90,31,0.3)]'
+                              : 'bg-white/[0.03] border-white/10 text-neutral-300 hover:border-white/30 hover:text-white'
+                          }`}
+                        >
+                          {serviceName}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
-                <div className="space-y-1.5 md:space-y-2">
-                  <label className="text-[10px] md:text-sm font-medium text-neutral-400 ml-1">Message</label>
-                  <textarea 
+
+                <div className="space-y-2">
+                  <label className="font-mono text-[11px] uppercase tracking-wider text-neutral-400 block">
+                    Project Brief
+                  </label>
+                  <textarea
                     required
                     rows={4}
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    placeholder="Tell us about your vision..."
-                    className="w-full px-4 py-3 md:px-6 md:py-4 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 focus:border-orange-500/50 focus:outline-none transition-colors resize-none text-xs md:text-base"
-                  ></textarea>
+                    placeholder="Share your brand, goals, timeline, and links..."
+                    className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/12 focus:border-[#FF5A1F] focus:outline-none transition-colors resize-none text-sm text-white placeholder:text-neutral-600"
+                  />
                 </div>
-                <button type="submit" className="w-full py-3.5 md:py-5 rounded-xl md:rounded-2xl bg-gradient-to-r from-orange-500 to-purple-600 text-white font-bold text-sm md:text-lg hover:shadow-[0_0_30px_rgba(249,115,22,0.3)] transition-all flex items-center justify-center gap-2">
-                  Send via WhatsApp
-                  <Send size={16} className="md:w-[18px] md:h-[18px]" />
-                </button>
+
+                <MagneticButton className="w-full" strength={0.14}>
+                  <button
+                    type="submit"
+                    className="w-full py-4 rounded-full bg-gradient-to-r from-[#FF5A1F] via-[#FF5A1F] to-[#FF2E93] hover:brightness-110 text-white font-bold text-sm uppercase tracking-wider shadow-[0_0_32px_rgba(255,90,31,0.35)] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <span>Send Brief via WhatsApp</span>
+                    <Send size={16} />
+                  </button>
+                </MagneticButton>
               </form>
             )}
-          </div>
+          </TiltSpotlightCard>
         </div>
       </div>
     </section>

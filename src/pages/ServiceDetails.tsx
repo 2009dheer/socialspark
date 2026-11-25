@@ -1,198 +1,156 @@
 import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Zap } from 'lucide-react';
-import { motion } from 'motion/react';
-
-const serviceData: Record<string, any> = {
-  'influencer-marketing': {
-    title: 'Influencer Marketing',
-    subtitle: 'Leverage voices that matter.',
-    description: 'We connect your brand with high-impact influencers to drive authentic engagement and exponential reach.',
-    detailedText: 'Trust is the most valuable currency in the modern economy. Influencer marketing allows you to borrow trust from established creators and channel it directly to your brand. We handle end-to-end influencer campaigns—from discovering the perfect brand fit and negotiating rates, to drafting creative briefs and measuring ROI.',
-    details: [
-      'Influencer Sourcing & Vetting',
-      'Contract Negotiation & Management',
-      'Creative Brief Development',
-      'Campaign Tracking & Analytics',
-      'Micro & Macro Influencer Strategy'
-    ],
-    gradient: 'from-pink-500 to-purple-500',
-    blob: 'bg-pink-500/20'
-  },
-  'digital-marketing': {
-    title: 'Digital Marketing',
-    subtitle: 'Comprehensive brand growth.',
-    description: 'End-to-end digital marketing solutions tailored to multiply your online presence and customer acquisition.',
-    detailedText: 'A siloed approach to marketing guarantees failure. True digital dominance requires an omnipresent strategy. We integrate SEO, content, email, and social media ecosystems into a cohesive machine. Every touchpoint is optimized to drive awareness, capture leads, and nurture them into lifelong customers.',
-    details: [
-      'Search Engine Optimization (SEO)',
-      'Email Marketing & Automation',
-      'Social Media Management',
-      'Omnichannel Strategy',
-      'Data-Driven Growth Consulting'
-    ],
-    gradient: 'from-blue-500 to-cyan-500',
-    blob: 'bg-blue-500/20'
-  },
-  'performance-marketing': {
-    title: 'Performance Marketing',
-    subtitle: 'ROI-focused campaigns.',
-    description: 'ROI-focused campaigns that turn attention into measurable business growth and revenue.',
-    detailedText: 'Attention is useless if it doesn\'t convert. Our Performance Marketing division connects the top of the funnel to your bottom line. We utilize hyper-targeted paid media, ruthless split-testing, and psychological conversion copywriting to turn strangers into high-LTV customers.',
-    details: [
-      'Precision Paid Social Campaigns',
-      'Conversion Rate Optimization (CRO)',
-      'Ruthless A/B Testing & Scaling',
-      'Psychological Copywriting',
-      'Advanced Retargeting Funnels'
-    ],
-    gradient: 'from-orange-500 to-red-500',
-    blob: 'bg-orange-500/20'
-  },
-  'affiliate-marketing': {
-    title: 'Affiliate Marketing',
-    subtitle: 'Scale a performance-based sales force.',
-    description: 'Build a profitable network of affiliates who are incentivized to drive high-quality traffic and sales to your brand.',
-    detailedText: 'Why pay for impressions when you can pay strictly for results? We set up, manage, and scale robust affiliate programs that turn industry publishers into your own commissioned sales team. We handle the complex integrations, commission structuring, and ongoing motivation.',
-    details: [
-      'Program Setup & Integration',
-      'Affiliate Recruitment & Vetting',
-      'Commission Strategy',
-      'Fraud Monitoring',
-      'Monthly Payout Management'
-    ],
-    gradient: 'from-emerald-500 to-teal-500',
-    blob: 'bg-emerald-500/20'
-  },
-  'content-creation': {
-    title: 'Content Creation',
-    subtitle: 'High-impact content that commands attention.',
-    description: 'High-impact content strategies that command attention, spark conversations, and convert audiences into loyal advocates.',
-    detailedText: 'Content is the undisputed currency of the digital age. But generic content doesn\'t cut it anymore. You need cinematic quality paired with native platform language. We house a full-stack production team to build the media assets that command absolute authority.',
-    details: [
-      'High-Retention Short-Form Video',
-      'Premium Long-Form Video',
-      'Ghostwriting & Written Content',
-      'High-End Photography',
-      'Podcast Production'
-    ],
-    gradient: 'from-purple-500 to-indigo-500',
-    blob: 'bg-purple-500/20'
-  },
-  'branding-marketing': {
-    title: 'Branding + Marketing',
-    subtitle: 'Where identity meets exponential growth.',
-    description: 'A holistic alignment of your core brand identity with high-leverage marketing strategies to dominate your market.',
-    detailedText: 'A beautiful brand without marketing is invisible. Marketing without a strong brand is a commodity race to the bottom. We provide the rare fusion of world-class aesthetic branding and ruthless marketing execution, ensuring you not only look premium but sell like it too.',
-    details: [
-      'Brand Identity & Logo Design',
-      'Market Positioning Strategy',
-      'Brand Voice & Messaging',
-      'Go-to-Market Campaigns',
-      'Integrated Marketing Rollout'
-    ],
-    gradient: 'from-rose-500 to-orange-500',
-    blob: 'bg-rose-500/20'
-  },
-  'personal-branding': {
-    title: 'Personal Branding',
-    subtitle: 'Forge an unforgettable digital identity.',
-    description: 'We craft compelling narratives and build your authority from the ground up to attract high-value opportunities.',
-    detailedText: 'In today’s digital noise, being good isn’t enough—you need to be recognized as the authority. Our Personal Branding framework is designed exclusively for founders and executives who are ready to dominate their niche. We systematically deconstruct your unique value proposition and deploy it across high-leverage platforms.',
-    details: [
-      'Brand Identity & Positioning',
-      'Vision & Narrative Architecture',
-      'Executive Presence Coaching',
-      'Thought Leadership Strategy',
-      'Media Press & PR Strategy'
-    ],
-    gradient: 'from-yellow-400 to-orange-500',
-    blob: 'bg-yellow-500/20'
-  }
-};
+import { ArrowLeft, ArrowRight, ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { SERVICES_DATA } from '../data/servicesData';
+import {
+  KineticLine,
+  KineticReveal,
+  TiltSpotlightCard,
+  MagneticButton,
+} from '../components/motion/MotionPrimitives';
 
 const ServiceDetails = () => {
   const { id } = useParams();
-  const service = id ? serviceData[id] : null;
+  const currentIndex = SERVICES_DATA.findIndex((s) => s.id === id);
 
-  if (!service) {
+  if (currentIndex === -1) {
     return <Navigate to="/services" replace />;
   }
 
+  const service = SERVICES_DATA[currentIndex];
+  const prevService = SERVICES_DATA[(currentIndex - 1 + SERVICES_DATA.length) % SERVICES_DATA.length];
+  const nextService = SERVICES_DATA[(currentIndex + 1) % SERVICES_DATA.length];
+
   return (
-    <div className="relative min-h-screen bg-neutral-950 pt-32 pb-24 px-5 overflow-hidden">
-      {/* Background Orbs */}
-      <div className={`hidden md:block absolute top-0 right-0 w-96 h-96 blur-[120px] pointer-events-none ${service.blob}`}></div>
-      <div className="hidden md:block absolute bottom-0 left-0 w-[500px] h-[500px] bg-neutral-900/40 blur-[100px] pointer-events-none"></div>
+    <section className="relative min-h-screen pt-28 md:pt-36 pb-24 px-5 md:px-10 max-w-5xl mx-auto">
+      <Link
+        to="/services"
+        className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors mb-10 font-mono text-xs uppercase tracking-widest"
+      >
+        <ArrowLeft size={15} /> All Capabilities
+      </Link>
 
-      <div className="max-w-4xl mx-auto relative z-10">
-        <Link 
-          to="/services" 
-          className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors mb-12 font-medium"
+      {/* Header */}
+      <div className="mb-12">
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <span className="font-mono text-xs text-neutral-500">CAPABILITY {service.index} / 07</span>
+          <span
+            className={`px-3 py-1 rounded-full border font-mono text-[10px] uppercase tracking-wider ${service.badgeClass}`}
+          >
+            {service.shortTag}
+          </span>
+        </div>
+
+        <h1 className="font-display text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-[-0.03em] text-white leading-[0.98] mb-5 uppercase">
+          <KineticLine>{service.title}</KineticLine>
+        </h1>
+
+        <p
+          className={`text-xl md:text-2xl font-medium text-transparent bg-clip-text bg-gradient-to-r ${service.accentClass}`}
         >
-          <ArrowLeft size={20} /> Back to Services
-        </Link>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest text-neutral-400 mb-6">
-            <Zap size={14} className="text-orange-400" /> Executive Overview
+          {service.subtitle}
+        </p>
+      </div>
+
+      {/* Benchmark Metrics Row */}
+      <KineticReveal className="grid grid-cols-3 gap-3 md:gap-5 mb-12">
+        {service.outcomes.map((o) => (
+          <div
+            key={o.label}
+            className="rounded-2xl bg-[#0B0B10]/90 border border-white/10 p-4 md:p-6"
+          >
+            <div className="font-display text-2xl sm:text-3xl md:text-4xl font-extrabold text-white">
+              {o.metric}
+            </div>
+            <div className="font-mono text-[10px] md:text-xs text-neutral-400 uppercase tracking-wider mt-1">
+              {o.label}
+            </div>
           </div>
-          
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight text-white">
-            {service.title}
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r font-medium mb-12" style={{ backgroundImage: `linear-gradient(to right, ${service.gradient.includes('orange') ? '#f97316' : '#d946ef'}, ${service.gradient.includes('purple') ? '#9333ea' : '#eab308'})` }}>
-            {service.subtitle}
-          </p>
-        </motion.div>
+        ))}
+      </KineticReveal>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-16"
-        >
-          <p className="text-lg md:text-xl text-neutral-300 leading-relaxed font-light mb-8">
-            {service.detailedText}
-          </p>
-        </motion.div>
+      {/* Narrative */}
+      <KineticReveal delay={0.05} className="mb-12">
+        <p className="text-neutral-300 text-base sm:text-lg md:text-xl leading-relaxed font-light">
+          {service.detailedText}
+        </p>
+      </KineticReveal>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-neutral-900/50 md:backdrop-blur-md border border-white/10 rounded-[2rem] p-8 md:p-12 mb-16"
+      {/* Deliverables Dossier */}
+      <KineticReveal delay={0.1} className="mb-14">
+        <TiltSpotlightCard
+          maxTilt={4}
+          spotlightColor={`${service.accentHex}24`}
+          className="rounded-[2rem] bg-[#0B0B10]/90 border border-white/12 p-7 md:p-11"
         >
-          <h3 className="text-2xl font-bold mb-8 text-white">System Deliverables</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {service.details.map((item: string, index: number) => (
-              <div key={index} className="flex items-start gap-4">
-                <CheckCircle2 className="shrink-0 text-white w-6 h-6" />
-                <span className="text-neutral-300 font-medium">{item}</span>
+          <div className="flex items-center justify-between mb-7 pb-4 border-b border-white/[0.08]">
+            <h2 className="font-display text-2xl font-bold text-white">What&apos;s Included</h2>
+            <span className="font-mono text-xs uppercase tracking-widest text-neutral-500">
+              Studio Deliverables
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {service.deliverables.map((item) => (
+              <div key={item} className="flex items-start gap-3.5">
+                <CheckCircle2
+                  size={20}
+                  style={{ color: service.accentHex }}
+                  className="shrink-0 mt-0.5"
+                />
+                <span className="text-neutral-200 text-sm md:text-base font-medium">{item}</span>
               </div>
             ))}
           </div>
-        </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="flex flex-col sm:flex-row gap-4"
+          <div className="mt-10 pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <p className="text-sm text-neutral-400">
+              Ready to launch <strong className="text-white">{service.title}</strong> with our Delhi team?
+            </p>
+            <MagneticButton strength={0.22}>
+              <Link
+                to={`/contact?service=${encodeURIComponent(service.title)}`}
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-[#FF5A1F] hover:bg-[#ff6d38] text-white font-bold text-sm uppercase tracking-wider shadow-[0_0_25px_rgba(255,90,31,0.35)] transition-colors"
+              >
+                <span>Enquire About This</span>
+                <ArrowUpRight size={16} />
+              </Link>
+            </MagneticButton>
+          </div>
+        </TiltSpotlightCard>
+      </KineticReveal>
+
+      {/* Prev / Next Capability Navigation */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-8 border-t border-white/[0.08]">
+        <Link
+          to={`/services/${prevService.id}`}
+          className="group p-5 rounded-2xl bg-white/[0.025] hover:bg-white/[0.05] border border-white/[0.08] transition-all flex items-center justify-between"
         >
-          <Link 
-            to="/contact" 
-            className="px-8 py-4 rounded-full bg-white text-black font-bold text-center hover:bg-neutral-200 transition-colors shadow-xl"
-          >
-            Deploy This System
-          </Link>
-        </motion.div>
+          <div>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-neutral-500 flex items-center gap-1.5">
+              <ArrowLeft size={12} /> Previous
+            </span>
+            <p className="font-display text-lg font-bold text-white group-hover:text-[#FFB800] transition-colors mt-1">
+              {prevService.title}
+            </p>
+          </div>
+        </Link>
+
+        <Link
+          to={`/services/${nextService.id}`}
+          className="group p-5 rounded-2xl bg-white/[0.025] hover:bg-white/[0.05] border border-white/[0.08] transition-all flex items-center justify-between text-right sm:justify-end"
+        >
+          <div>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-neutral-500 flex items-center justify-end gap-1.5">
+              Next <ArrowRight size={12} />
+            </span>
+            <p className="font-display text-lg font-bold text-white group-hover:text-[#FF5A1F] transition-colors mt-1">
+              {nextService.title}
+            </p>
+          </div>
+        </Link>
       </div>
-    </div>
+    </section>
   );
 };
 

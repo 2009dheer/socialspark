@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, X, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Play, X, ChevronRight, ChevronLeft, ArrowUpRight, Film } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { TiltSpotlightCard } from './motion/MotionPrimitives';
 
 const RAW_URLS = [
   'https://youtube.com/shorts/TpTVNeb2u_U',
@@ -12,201 +13,278 @@ const RAW_URLS = [
   'https://youtube.com/shorts/VFTPZwFPVtQ',
 ];
 
-// Extract VIDEO_ID
-const extractVideoId = (url: string) => {
+const extractVideoId = (url: string): string | null => {
   const match = url.match(/shorts\/([a-zA-Z0-9_-]+)/);
   return match ? match[1] : null;
 };
+
 const videoIds = RAW_URLS.map(extractVideoId).filter(Boolean) as string[];
 
-// Clean Thumbnail Component was removed since user explicitly requested autoplaying videos in background.
+/**
+ * Lightweight 9:16 poster preview frame.
+ * Eliminates the severe lag caused by embedding 7 autoplaying YouTube iframes at once.
+ * Only loads the real YouTube player inside the interactive theatre modal when clicked.
+ */
+const ReelPosterCard: React.FC<{
+  id: string;
+  index: number;
+  onOpen: (index: number) => void;
+}> = ({ id, index, onOpen }) => {
+  const [thumbUrl, setThumbUrl] = useState(`https://i.ytimg.com/vi/${id}/oar2.jpg`);
+  const [fallbackStep, setFallbackStep] = useState(0);
 
-export default function VideoPortfolio() {
-  const [activeVideo, setActiveVideo] = useState<string | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  // Keybindings for closing lightbox seamlessly
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setActiveVideo(null);
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  // Block body scroll and hide navbar when lightbox is active
-  useEffect(() => {
-    const nav = document.querySelector('nav');
-    if (activeVideo) {
-      document.body.style.overflow = 'hidden';
-      if (nav) {
-        nav.style.opacity = '0';
-        nav.style.pointerEvents = 'none';
-      }
-    } else {
-      document.body.style.overflow = 'auto';
-      if (nav) {
-        nav.style.opacity = '1';
-        nav.style.pointerEvents = 'auto';
-      }
-    }
-    return () => { 
-      document.body.style.overflow = 'auto'; 
-      if (nav) {
-        nav.style.opacity = '1';
-        nav.style.pointerEvents = 'auto';
-      }
-    };
-  }, [activeVideo]);
-
-  const scrollLeft = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -400, behavior: 'smooth' });
-    }
-  };
-
-  const scrollRight = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 400, behavior: 'smooth' });
+  const handleImgError = () => {
+    if (fallbackStep === 0) {
+      setFallbackStep(1);
+      setThumbUrl(`https://i.ytimg.com/vi/${id}/hqdefault.jpg`);
+    } else if (fallbackStep === 1) {
+      setFallbackStep(2);
+      setThumbUrl(`https://i.ytimg.com/vi/${id}/mqdefault.jpg`);
     }
   };
 
   return (
-    <section className="relative py-24 bg-neutral-950 border-t border-white/5">
-      {/* Header */}
-      <div className="max-w-7xl mx-auto px-5 mb-10 flex flex-col md:flex-row justify-between items-end gap-6">
-        <div className="max-w-2xl">
-          <motion.h2 
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-4 font-outfit"
-          >
-            Campaign Showcase
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-neutral-400 text-lg sm:text-xl font-light font-outfit"
-          >
-            High-performance storytelling designed for maximum reach and engagement.
-          </motion.p>
+    <div className="shrink-0 w-[250px] sm:w-[290px] md:w-[320px] aspect-[9/16] snap-center">
+      <TiltSpotlightCard
+        maxTilt={6}
+        spotlightColor="rgba(255, 90, 31, 0.22)"
+        className="rounded-[1.75rem] border border-white/10 bg-[#0B0B0F] overflow-hidden cursor-pointer group shadow-[0_20px_50px_rgba(0,0,0,0.65)] hover:border-orange-500/40 transition-colors duration-300"
+      >
+        <div onClick={() => onOpen(index)} className="relative w-full h-full">
+          {/* High-res vertical YouTube frame */}
+            <img
+            src={thumbUrl}
+            onError={handleImgError}
+            onLoad={(e) => {
+              if (e.currentTarget.naturalWidth <= 120 && fallbackStep < 2) {
+                handleImgError();
+              }
+            }}
+            loading="lazy"
+            alt={`Social Spark Campaign Reel ${index + 1}`}
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          />
+
+          {/* Cinematic vignette & gradient framing */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/15 to-black/40 opacity-85 group-hover:opacity-65 transition-opacity duration-300" />
+
+          {/* Top Editorial Metadata */}
+          <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+            <span className="px-2.5 py-1 rounded-full bg-black/55 backdrop-blur-md border border-white/15 font-mono text-[10px] tracking-widest text-white/90 uppercase">
+              REEL {String(index + 1).padStart(2, '0')}
+            </span>
+            <span className="w-7 h-7 rounded-full bg-black/55 backdrop-blur-md border border-white/15 flex items-center justify-center text-white/80 group-hover:bg-[#FF5A1F] group-hover:border-[#FF5A1F] group-hover:text-white transition-all">
+              <ArrowUpRight size={13} />
+            </span>
+          </div>
+
+          {/* Center Play Button */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-black/50 backdrop-blur-md border border-white/30 flex items-center justify-center text-white shadow-2xl transform transition-all duration-300 group-hover:scale-110 group-hover:bg-[#FF5A1F] group-hover:border-[#FF5A1F]">
+              <Play size={22} className="fill-white ml-0.5" />
+            </div>
+          </div>
+
+          {/* Bottom Strip */}
+          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-widest text-[#FFB800]">
+                9:16 Vertical Cut
+              </p>
+              <p className="font-display text-sm font-bold text-white mt-0.5">
+                Watch Showcase
+              </p>
+            </div>
+            <span className="font-mono text-[10px] text-neutral-400">HD · SOUND</span>
+          </div>
         </div>
-        
-        {/* Desktop Navigation Arrows */}
-        <div className="hidden md:flex gap-3">
-          <button 
+      </TiltSpotlightCard>
+    </div>
+  );
+};
+
+export default function VideoPortfolio() {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const activeVideo = activeIndex !== null ? videoIds[activeIndex] : null;
+
+  const goNext = () => {
+    if (activeIndex === null) return;
+    setActiveIndex((activeIndex + 1) % videoIds.length);
+  };
+
+  const goPrev = () => {
+    if (activeIndex === null) return;
+    setActiveIndex((activeIndex - 1 + videoIds.length) % videoIds.length);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (activeIndex === null) return;
+      if (e.key === 'Escape') setActiveIndex(null);
+      if (e.key === 'ArrowRight') goNext();
+      if (e.key === 'ArrowLeft') goPrev();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeIndex]);
+
+  useEffect(() => {
+    if (activeIndex !== null) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [activeIndex]);
+
+  const scrollLeft = () => {
+    scrollRef.current?.scrollBy({ left: -380, behavior: 'smooth' });
+  };
+
+  const scrollRight = () => {
+    scrollRef.current?.scrollBy({ left: 380, behavior: 'smooth' });
+  };
+
+  return (
+    <section id="showcase" className="relative py-20 md:py-32 border-t border-white/[0.07]">
+      {/* Section Header */}
+      <div className="max-w-7xl mx-auto px-5 md:px-10 mb-10 md:mb-14 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div className="max-w-2xl">
+          <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-[#FF5A1F] mb-4">
+            <Film size={14} />
+            <span>Selected Productions · {videoIds.length} Cuts</span>
+          </div>
+          <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#F5F3EE] leading-[1.02]">
+            Campaign Showcase
+          </h2>
+          <p className="text-neutral-400 text-base sm:text-lg mt-4 max-w-xl font-light">
+            Scroll-stopping reels built for watch time, shares, and brand recall. Tap any frame to stream with full audio.
+          </p>
+        </div>
+
+        {/* Navigation Controls */}
+        <div className="flex items-center gap-3 self-end md:self-auto">
+          <button
+            type="button"
             onClick={scrollLeft}
-            className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all text-white"
-            aria-label="Scroll left"
+            className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center bg-white/[0.03] hover:bg-white hover:text-black transition-all text-white cursor-pointer"
+            aria-label="Scroll reels left"
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={20} />
           </button>
-          <button 
+          <button
+            type="button"
             onClick={scrollRight}
-            className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all text-white"
-            aria-label="Scroll right"
+            className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center bg-white/[0.03] hover:bg-white hover:text-black transition-all text-white cursor-pointer"
+            aria-label="Scroll reels right"
           >
-            <ChevronRight size={24} />
+            <ChevronRight size={20} />
           </button>
         </div>
       </div>
 
-      {/* Smooth Scrolling Container */}
-      <div className="relative w-full overflow-hidden">
-        <div 
+      {/* Horizontal Reel Track */}
+      <div className="relative w-full">
+        <div
           ref={scrollRef}
-          className="flex overflow-x-auto snap-x snap-mandatory gap-6 px-5 md:px-10 lg:px-[calc((100vw-80rem)/2+1.25rem)] pb-12 pt-4 hide-scrollbar"
-          style={{ scrollPaddingLeft: '1.25rem' }}
+          className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 px-5 md:px-10 lg:px-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))] pb-8 pt-2 hide-scrollbar"
         >
-          {/* Inject style to hide scrollbar cross-browser */}
-          <style>{`
-            .hide-scrollbar::-webkit-scrollbar { display: none; }
-            .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-          `}</style>
-          
           {videoIds.map((id, index) => (
-            <div
-              key={id}
-              onClick={() => setActiveVideo(id)}
-              className="shrink-0 w-[260px] sm:w-[300px] md:w-[340px] aspect-[9/16] snap-center relative rounded-[2rem] overflow-hidden cursor-pointer group bg-neutral-900 border border-white/10 shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border-white/20"
-            >
-              {/* Auto-playing Muted Background Video */}
-              <div className="absolute inset-0 w-full h-full pointer-events-none rounded-[2rem] overflow-hidden">
-                <iframe
-                  src={`https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&disablekb=1&modestbranding=1&playsinline=1&rel=0`}
-                  title={`Campaign Video ${index + 1}`}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  className="w-full h-full scale-[1.3] md:scale-[1.1] transition-transform duration-700 ease-out group-hover:scale-125 md:group-hover:scale-110 object-cover"
-                />
-              </div>
-              
-              {/* Clean Dark Overlay to intercept clicks cleanly over iframe */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300 z-10" />
-              
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-95 group-hover:scale-100 z-20">
-                <div className="w-16 h-16 rounded-full bg-black/40 md:backdrop-blur-md flex items-center justify-center border border-white/30 text-white shadow-xl">
-                  <Play size={24} className="fill-white ml-1" />
-                </div>
-              </div>
-            </div>
+            <ReelPosterCard key={id} id={id} index={index} onOpen={setActiveIndex} />
           ))}
         </div>
       </div>
 
-      {/* Clean Premium Lightbox with Effortless Exit */}
+      {/* Interactive Video Lightbox Theatre */}
       <AnimatePresence>
-        {activeVideo && (
+        {activeVideo && activeIndex !== null && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[99999] bg-black/95 md:backdrop-blur-xl flex flex-col items-center justify-center cursor-pointer p-4 sm:p-6 md:p-10"
-            onClick={() => setActiveVideo(null)}
+            transition={{ duration: 0.22 }}
+            onClick={() => setActiveIndex(null)}
+            data-lenis-prevent
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-4 sm:p-6"
           >
-            <motion.div 
-              initial={{ scale: 0.95, opacity: 0, y: 10 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 10 }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="relative w-full flex flex-col items-center cursor-default"
-              onClick={e => e.stopPropagation()} // Prevent clicks *on the video player container* from closing
+            <div
+              className="relative flex flex-col items-center justify-center w-full max-w-md max-h-[92vh]"
+              onClick={(e) => e.stopPropagation()}
             >
-              {/* The Video Player Container - height restricted so it NEVER pushes the close button off screen! */}
-              <div 
-                className="relative w-full bg-black rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.8)] border border-white/10 flex-shrink-0 mx-auto"
-                style={{ 
-                  aspectRatio: '9/16', 
-                  maxHeight: '75vh', 
-                  maxWidth: 'min(100%, calc(75vh * 9 / 16))'
-                }}
-              >
-                <iframe
-                  src={`https://www.youtube.com/embed/${activeVideo}?autoplay=1&modestbranding=1&rel=0&controls=1&fs=1&playsinline=1`}
-                  title="Campaign Video"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="absolute inset-0 w-full h-full"
-                ></iframe>
-              </div>
-
-              {/* Securely placed, unmissable close button BELOW the video */}
-              <div className="mt-6 md:mt-8 flex-shrink-0 z-[100000]">
-                <button 
-                  className="flex items-center gap-2 px-8 py-3 rounded-full bg-white hover:bg-neutral-200 text-black shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all hover:scale-105 active:scale-95 font-bold tracking-wide"
-                  onClick={(e) => { e.stopPropagation(); setActiveVideo(null); }}
-                  aria-label="Close video"
+              {/* Top Modal Header */}
+              <div className="w-full max-w-[380px] flex items-center justify-between mb-3 px-1">
+                <span className="font-mono text-xs tracking-widest uppercase text-neutral-400">
+                  Reel {String(activeIndex + 1).padStart(2, '0')} / {String(videoIds.length).padStart(2, '0')}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setActiveIndex(null)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white hover:text-black text-xs font-mono uppercase tracking-wider text-white transition-colors cursor-pointer"
                 >
-                  <X size={20} className="stroke-[3px]" />
-                  CLOSE VIDEO
+                  <X size={14} /> Close
                 </button>
               </div>
-            </motion.div>
+
+              {/* Video Frame + Prev/Next */}
+              <div className="relative flex items-center justify-center w-full gap-3">
+                <button
+                  type="button"
+                  onClick={goPrev}
+                  aria-label="Previous video"
+                  className="hidden sm:flex w-10 h-10 shrink-0 rounded-full bg-white/10 hover:bg-[#FF5A1F] text-white items-center justify-center transition-colors cursor-pointer"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+
+                <motion.div
+                  key={activeVideo}
+                  initial={{ scale: 0.94, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.94, opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="w-full max-w-[360px] h-[68vh] sm:h-[74vh] aspect-[9/16] rounded-[1.75rem] overflow-hidden bg-neutral-950 border border-white/15 shadow-[0_30px_90px_rgba(0,0,0,0.9)]"
+                >
+                  <iframe
+                    src={`https://www.youtube.com/embed/${activeVideo}?autoplay=1&modestbranding=1&rel=0&controls=1&fs=1&playsinline=1`}
+                    title={`Social Spark Reel ${activeIndex + 1}`}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  />
+                </motion.div>
+
+                <button
+                  type="button"
+                  onClick={goNext}
+                  aria-label="Next video"
+                  className="hidden sm:flex w-10 h-10 shrink-0 rounded-full bg-white/10 hover:bg-[#FF5A1F] text-white items-center justify-center transition-colors cursor-pointer"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+
+              {/* Mobile Prev/Next Row */}
+              <div className="flex sm:hidden items-center justify-center gap-4 mt-4">
+                <button
+                  type="button"
+                  onClick={goPrev}
+                  className="px-4 py-2 rounded-full bg-white/10 text-white text-xs font-mono uppercase tracking-wider flex items-center gap-1"
+                >
+                  <ChevronLeft size={14} /> Prev
+                </button>
+                <button
+                  type="button"
+                  onClick={goNext}
+                  className="px-4 py-2 rounded-full bg-white/10 text-white text-xs font-mono uppercase tracking-wider flex items-center gap-1"
+                >
+                  Next <ChevronRight size={14} />
+                </button>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

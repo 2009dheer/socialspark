@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://socialspark.in/sitemap.xml
+Sitemap: https://socialspark.co.in/sitemap.xml
