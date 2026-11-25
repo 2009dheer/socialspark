@@ -3,13 +3,13 @@ import { Play, X, ChevronRight, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 const RAW_URLS = [
-  'https://youtube.com/shorts/VUYbYIiv8e8',
+  'https://youtube.com/shorts/TpTVNeb2u_U',
+  'https://youtube.com/shorts/wsQDqZVyfbE',
+  'https://youtube.com/shorts/SgQx2Rwj20o',
+  'https://youtube.com/shorts/rnEwExCDN0M',
+  'https://youtube.com/shorts/lR-vqLOGjC8',
   'https://youtube.com/shorts/0pjdMpqeaAM',
   'https://youtube.com/shorts/VFTPZwFPVtQ',
-  'https://youtube.com/shorts/sexmpLa6sMw',
-  'https://youtube.com/shorts/sw-1VZ4jj2Q',
-  'https://youtube.com/shorts/r6z40uc8nqM',
-  'https://youtube.com/shorts/h1DwWqHRWvg',
 ];
 
 // Extract VIDEO_ID
