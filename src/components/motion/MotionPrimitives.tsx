@@ -4,40 +4,36 @@ import {
   useScroll,
   useTransform,
   useSpring,
-  useVelocity,
-  useAnimationFrame,
   useMotionValue,
   useMotionTemplate,
 } from 'motion/react';
 
 /**
- * Kinetic line-mask reveal: words slide sharply out of masked bounds with studio easing.
+ * Clean Apple-style smooth entrance without harsh horizontal clipping.
  */
-export const KineticLine: React.FC<{
+export const SmoothLine: React.FC<{
   children: React.ReactNode;
   delay?: number;
   className?: string;
 }> = ({ children, delay = 0, className = '' }) => {
   return (
-    <span className={`block overflow-hidden ${className}`}>
-      <motion.span
-        className="block"
-        initial={{ y: '108%', opacity: 0.2 }}
-        animate={{ y: '0%', opacity: 1 }}
-        transition={{
-          duration: 0.85,
-          delay,
-          ease: [0.16, 1, 0.3, 1],
-        }}
-      >
-        {children}
-      </motion.span>
-    </span>
+    <motion.span
+      className={`block ${className}`}
+      initial={{ y: 22, opacity: 0, filter: 'blur(6px)' }}
+      animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
+      transition={{
+        duration: 0.75,
+        delay,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+    >
+      {children}
+    </motion.span>
   );
 };
 
 /**
- * Kinetic reveal triggered as section scrolls into view.
+ * Scroll-triggered smooth spatial emergence.
  */
 export const KineticReveal: React.FC<{
   children: React.ReactNode;
@@ -46,10 +42,10 @@ export const KineticReveal: React.FC<{
 }> = ({ children, delay = 0, className = '' }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 36 }}
+      initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.75, delay, ease: [0.16, 1, 0.3, 1] }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >
       {children}
@@ -58,72 +54,33 @@ export const KineticReveal: React.FC<{
 };
 
 /**
- * Dual-track scroll-velocity reactive typography marquee.
- * Speeds up and subtly skews based on live Lenis/window scroll velocity.
+ * Scroll-driven 3D Apple spatial depth stage for cards/sections.
  */
-export const VelocityMarquee: React.FC<{
-  items: string[];
-  baseVelocity?: number;
-  reverse?: boolean;
-  outlined?: boolean;
-}> = ({ items, baseVelocity = 26, reverse = false, outlined = false }) => {
-  const baseX = useMotionValue(0);
-  const { scrollY } = useScroll();
-  const scrollVelocity = useVelocity(scrollY);
-  const smoothVelocity = useSpring(scrollVelocity, {
-    damping: 50,
-    stiffness: 400,
+export const SpatialDepthWrapper: React.FC<{
+  children: React.ReactNode;
+  className?: string;
+}> = ({ children, className = '' }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start end', 'center center'],
   });
-
-  const velocityFactor = useTransform(smoothVelocity, [-2500, 0, 2500], [-3.2, 0, 3.2], {
-    clamp: false,
-  });
-
-  const skew = useTransform(smoothVelocity, [-2000, 0, 2000], [-4, 0, 4]);
-  const directionFactor = useRef<number>(reverse ? -1 : 1);
-
-  useAnimationFrame((_, delta) => {
-    const dt = Math.min(delta, 50) / 1000;
-    const vf = velocityFactor.get();
-
-    let moveBy = directionFactor.current * baseVelocity * dt;
-    if (vf < -0.1) directionFactor.current = reverse ? 1 : -1;
-    else if (vf > 0.1) directionFactor.current = reverse ? -1 : 1;
-
-    moveBy += directionFactor.current * Math.abs(vf) * baseVelocity * 0.45 * dt;
-
-    let next = baseX.get() - moveBy;
-    if (next <= -50) next += 50;
-    if (next > 0) next -= 50;
-    baseX.set(next);
-  });
-
-  const x = useTransform(baseX, (v) => `${v}%`);
-
-  const track = [...items, ...items, ...items, ...items];
+  const smooth = useSpring(scrollYProgress, { stiffness: 120, damping: 24 });
+  const scale = useTransform(smooth, [0, 1], [0.94, 1]);
+  const rotateX = useTransform(smooth, [0, 1], [8, 0]);
+  const opacity = useTransform(smooth, [0, 0.45], [0.5, 1]);
 
   return (
-    <div className="w-full overflow-hidden select-none py-2">
-      <motion.div className="flex whitespace-nowrap will-change-transform" style={{ x, skewX: skew }}>
-        {track.map((text, idx) => (
-          <div key={idx} className="inline-flex items-center shrink-0">
-            <span
-              className={`font-bebas text-4xl sm:text-5xl md:text-7xl tracking-[0.04em] px-5 md:px-8 transition-colors duration-300 ${
-                outlined ? 'text-stroke-subtle hover:text-white' : 'text-[#F5F3EE]/90'
-              }`}
-            >
-              {text}
-            </span>
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FF5A1F] shrink-0 shadow-[0_0_12px_#FF5A1F]" />
-          </div>
-        ))}
+    <div ref={ref} style={{ perspective: 1200 }} className={className}>
+      <motion.div style={{ scale, rotateX, opacity }} className="will-change-transform">
+        {children}
       </motion.div>
     </div>
   );
 };
 
 /**
- * Interactive 3D tilt + specular border spotlight card using pure MotionValues (0 React re-renders).
+ * Liquid Glass interactive 3D tilt + silver-white specular border sheen card.
  */
 export const TiltSpotlightCard: React.FC<{
   children: React.ReactNode;
@@ -133,8 +90,8 @@ export const TiltSpotlightCard: React.FC<{
 }> = ({
   children,
   className = '',
-  spotlightColor = 'rgba(255, 90, 31, 0.16)',
-  maxTilt = 7,
+  spotlightColor = 'rgba(255, 255, 255, 0.11)',
+  maxTilt = 5,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
@@ -142,11 +99,11 @@ export const TiltSpotlightCard: React.FC<{
   const rotX = useMotionValue(0);
   const rotY = useMotionValue(0);
 
-  const smoothRotX = useSpring(rotX, { stiffness: 260, damping: 24 });
-  const smoothRotY = useSpring(rotY, { stiffness: 260, damping: 24 });
+  const smoothRotX = useSpring(rotX, { stiffness: 240, damping: 26 });
+  const smoothRotY = useSpring(rotY, { stiffness: 240, damping: 26 });
   const [hovered, setHovered] = useState(false);
 
-  const spotlightBg = useMotionTemplate`radial-gradient(460px circle at ${mouseX}px ${mouseY}px, ${spotlightColor}, transparent 75%)`;
+  const spotlightBg = useMotionTemplate`radial-gradient(380px circle at ${mouseX}px ${mouseY}px, ${spotlightColor}, transparent 75%)`;
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const el = cardRef.current;
@@ -179,7 +136,6 @@ export const TiltSpotlightCard: React.FC<{
         style={{
           rotateX: smoothRotX,
           rotateY: smoothRotY,
-          transformStyle: 'preserve-3d',
         }}
         className={`relative h-full will-change-transform ${className}`}
       >
@@ -197,18 +153,18 @@ export const TiltSpotlightCard: React.FC<{
 };
 
 /**
- * Magnetic cursor attraction wrapper for primary CTAs and nav pills.
+ * Subtle magnetic cursor wrap for pill buttons.
  */
 export const MagneticButton: React.FC<{
   children: React.ReactNode;
   className?: string;
   strength?: number;
-}> = ({ children, className = '', strength = 0.28 }) => {
+}> = ({ children, className = '', strength = 0.2 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const smoothX = useSpring(x, { stiffness: 300, damping: 20 });
-  const smoothY = useSpring(y, { stiffness: 300, damping: 20 });
+  const smoothX = useSpring(x, { stiffness: 320, damping: 24 });
+  const smoothY = useSpring(y, { stiffness: 320, damping: 24 });
 
   const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (window.innerWidth < 768) return;
@@ -238,3 +194,6 @@ export const MagneticButton: React.FC<{
     </motion.div>
   );
 };
+
+// Backwards-compatible alias for inner pages during step-by-step staging
+export const KineticLine = SmoothLine;

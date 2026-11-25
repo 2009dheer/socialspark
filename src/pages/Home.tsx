@@ -1,22 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, ArrowRight, Play, Sparkles, CheckCircle2, Flame } from 'lucide-react';
+import { ArrowUpRight, Play, Volume2, CheckCircle2, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
-import VideoPortfolio from '../components/VideoPortfolio';
+import VideoPortfolio, { SHOWCASE_VIDEO_IDS, ReelLightbox } from '../components/VideoPortfolio';
 import { ContainerScroll } from '../components/ui/container-scroll-animation';
 import { DashboardMockup } from '../components/ui/DashboardMockup';
 import {
-  KineticLine,
+  SmoothLine,
   KineticReveal,
-  VelocityMarquee,
   TiltSpotlightCard,
   MagneticButton,
 } from '../components/motion/MotionPrimitives';
 import { SERVICES_DATA } from '../data/servicesData';
 
+const FEATURED_REELS = [
+  { index: 0, label: '01', id: SHOWCASE_VIDEO_IDS[0] },
+  { index: 1, label: '02', id: SHOWCASE_VIDEO_IDS[1] },
+  { index: 2, label: '03', id: SHOWCASE_VIDEO_IDS[2] },
+];
+
 const Home = () => {
-  const [activeCapIndex, setActiveCapIndex] = useState(0);
-  const activeService = SERVICES_DATA[activeCapIndex];
+  const [heroReelPos, setHeroReelPos] = useState(0);
+  const [heroLightboxIndex, setHeroLightboxIndex] = useState<number | null>(null);
+  const [heroInView, setHeroInView] = useState(true);
+  const heroVideoRef = useRef<HTMLDivElement>(null);
+  const activeHeroReel = FEATURED_REELS[heroReelPos] ?? FEATURED_REELS[0];
+
+  // Pause hero video iframe cleanly once user scrolls well below hero so showcase can autoplay smoothly
+  useEffect(() => {
+    const el = heroVideoRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setHeroInView(entry.isIntersecting),
+      { threshold: 0.25 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const scrollToShowcase = () => {
     const el = document.getElementById('showcase');
@@ -26,141 +46,224 @@ const Home = () => {
   return (
     <>
       {/* ============================================================
-          ACT I: IMMEDIATE KINETIC HERO (FRAME-1 RENDER, ZERO BLOCKING)
+          ACT I: BRAND-FIRST APPLE LIQUID GLASS HERO + AUTOPLAY REEL
          ============================================================ */}
-      <section className="relative min-h-[92vh] md:min-h-screen flex flex-col justify-between pt-28 md:pt-36 pb-10 px-5 md:px-10 max-w-7xl mx-auto">
-        {/* Top Metadata Strip */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.08] pb-5"
-        >
-          <div className="inline-flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-300">
-            <span className="w-2 h-2 rounded-full bg-[#FF5A1F] shadow-[0_0_12px_#FF5A1F]" />
-            <span>Delhi, India · Personal Branding &amp; Growth Studio</span>
-          </div>
-          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-500">
-            28.6139° N / 77.2090° E · Creative Performance
-          </div>
-        </motion.div>
+      <section className="relative min-h-[calc(100vh-1rem)] flex items-center pt-20 md:pt-24 pb-10 px-4 sm:px-6 md:px-8 max-w-6xl mx-auto">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+          {/* Left Column — Client's Logo, Specified Font & Brand Colors Prominently Displayed */}
+          <div className="lg:col-span-6 space-y-4 sm:space-y-5">
+            {/* Eyebrow badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full liquid-glass-pill text-[11px] font-medium text-[#D1D1D6]"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-gradient" />
+              <span>Delhi · Creative &amp; Performance Agency</span>
+            </motion.div>
 
-        {/* Hero Typography Stage */}
-        <div className="my-auto py-10 md:py-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
-          <div className="lg:col-span-9">
-            <h1 className="font-display font-extrabold tracking-[-0.035em] leading-[0.94] text-[clamp(2.85rem,7.8vw,6.8rem)] uppercase text-[#F5F3EE]">
-              <KineticLine delay={0.04}>We Turn</KineticLine>
-              <KineticLine delay={0.12}>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB800] via-[#FF5A1F] to-[#FF2E93]">
-                  Attention
-                </span>{' '}
-                Into
-              </KineticLine>
-              <KineticLine delay={0.2}>Cultural Currency.</KineticLine>
-            </h1>
-          </div>
+            {/* Brand Lockup: Client's Logo + Bebas Neue Name + Yellow-Orange-Purple Gradient */}
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.04 }}
+              className="flex items-center gap-3.5 sm:gap-4"
+            >
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl liquid-glass flex items-center justify-center p-2 shrink-0">
+                <img
+                  src="/logo.png"
+                  alt="Social Spark Official Logo"
+                  className="w-full h-full object-contain drop-shadow-[0_0_14px_rgba(249,115,22,0.45)]"
+                />
+              </div>
+              <div>
+                <h1 className="font-bebas font-normal text-5xl sm:text-6xl lg:text-[4.25rem] tracking-wide leading-[0.9] text-brand-gradient">
+                  Social Spark
+                </h1>
+                <p className="font-outfit text-xs sm:text-sm text-[#A1A1A6] tracking-wide mt-0.5">
+                  Ignite your brand. Scale your impact.
+                </p>
+              </div>
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.28 }}
-            className="lg:col-span-3 flex flex-col gap-6 pb-2"
-          >
-            <p className="text-sm md:text-base text-neutral-300 leading-relaxed font-light">
-              Built in Delhi for ambitious founders and modern consumer brands. Short-form cinema, creator ecosystems, and paid media engineered to scale.
-            </p>
-            <div className="flex flex-col sm:flex-row lg:flex-col gap-3">
-              <MagneticButton strength={0.22}>
+            {/* Primary Apple-Proportioned Positioning Statement */}
+            <h2 className="font-display font-semibold tracking-[-0.03em] leading-[1.08] text-3xl sm:text-4xl lg:text-[2.65rem] text-[#F5F5F7]">
+              <SmoothLine delay={0.08}>Brands built to</SmoothLine>
+              <SmoothLine delay={0.14}>
+                command <span className="text-[#86868B]">attention.</span>
+              </SmoothLine>
+            </h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="font-outfit text-sm sm:text-base text-[#A1A1A6] max-w-md leading-relaxed font-light"
+            >
+              Personal branding, high-retention short-form production, creator partnerships, and creative-led paid media engineered in Delhi.
+            </motion.p>
+
+            {/* Primary Actions — Mobile Thumb-Friendly */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.26 }}
+              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1"
+            >
+              <MagneticButton strength={0.18} className="w-full sm:w-auto">
                 <Link
                   to="/contact"
-                  className="w-full px-6 py-3.5 rounded-full bg-[#F5F3EE] hover:bg-[#FF5A1F] text-black hover:text-white font-bold text-sm transition-colors flex items-center justify-between gap-3 shadow-xl"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:py-3 rounded-full bg-brand-gradient hover:brightness-110 text-white font-semibold text-sm transition-all shadow-[0_10px_30px_rgba(249,115,22,0.3)]"
                 >
-                  <span>Build Your Brand</span>
-                  <ArrowUpRight size={17} />
+                  <span>Start a Project</span>
+                  <ArrowUpRight size={15} />
                 </Link>
               </MagneticButton>
+
               <button
                 type="button"
                 onClick={scrollToShowcase}
-                className="w-full px-6 py-3.5 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/15 text-white font-medium text-sm transition-colors flex items-center justify-between gap-3 backdrop-blur-md cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 sm:py-3 rounded-full liquid-glass-pill text-[#F5F5F7] hover:bg-white/[0.12] font-medium text-sm transition-all cursor-pointer"
               >
-                <span>Watch Reels</span>
-                <Play size={14} className="fill-white" />
+                <Play size={13} className="fill-white" />
+                <span>Watch Showcase</span>
               </button>
+            </motion.div>
+
+            {/* Studio Metrics Row */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.34 }}
+              className="grid grid-cols-3 gap-3 sm:gap-4 pt-4 border-t border-white/[0.08] max-w-md"
+            >
+              <div>
+                <p className="font-display text-lg sm:text-xl font-semibold text-[#F5F5F7]">3.8M+</p>
+                <p className="text-[11px] text-[#86868B]">Monthly Reach</p>
+              </div>
+              <div>
+                <p className="font-display text-lg sm:text-xl font-semibold text-[#F5F5F7]">4.8x</p>
+                <p className="text-[11px] text-[#86868B]">Blended ROAS</p>
+              </div>
+              <div>
+                <p className="font-display text-lg sm:text-xl font-semibold text-[#F5F5F7]">7</p>
+                <p className="text-[11px] text-[#86868B]">Core Services</p>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Right Column — Auto-Playing 3D Liquid Glass Reel Showcase */}
+          <motion.div
+            ref={heroVideoRef}
+            initial={{ opacity: 0, scale: 0.95, y: 16 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:col-span-6 flex justify-center lg:justify-end relative pt-2 lg:pt-0"
+          >
+            <div className="relative flex items-center justify-center">
+              {/* Desktop floating KPI chips */}
+              <div className="hidden md:flex flex-col gap-0.5 px-3.5 py-2.5 rounded-2xl liquid-glass absolute -left-16 top-14 z-20 pointer-events-none">
+                <span className="text-[10px] font-mono text-[#86868B]">HOOK HOLD</span>
+                <span className="font-display text-sm font-semibold text-[#F5F5F7]">76% Avg.</span>
+              </div>
+
+              <div className="hidden md:flex flex-col gap-0.5 px-3.5 py-2.5 rounded-2xl liquid-glass absolute -right-14 bottom-20 z-20 pointer-events-none">
+                <span className="text-[10px] font-mono text-[#86868B]">PRODUCTION</span>
+                <span className="font-display text-sm font-semibold text-[#F5F5F7]">4K Reels</span>
+              </div>
+
+              {/* Main 3D Tilt Liquid Glass Device Frame with Autoplaying Muted Video */}
+              <div className="w-[225px] sm:w-[250px] md:w-[260px] aspect-[9/16]">
+                <TiltSpotlightCard
+                  maxTilt={6}
+                  spotlightColor="rgba(255, 255, 255, 0.14)"
+                  className="rounded-[2.2rem] liquid-glass p-2 shadow-[0_28px_80px_rgba(0,0,0,0.85)]"
+                >
+                  <div
+                    className="relative w-full h-full rounded-[1.8rem] overflow-hidden isolate bg-neutral-950"
+                    style={{ clipPath: 'inset(0 round 1.8rem)' }}
+                  >
+                    {/* Instant crisp fallback poster underneath while stream loads */}
+                    <img
+                      src={`https://i.ytimg.com/vi/${activeHeroReel.id}/oar2.jpg`}
+                      alt={`Social Spark Featured Reel ${activeHeroReel.label}`}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+
+                    {/* Auto-playing muted inline YouTube embed when Hero is visible */}
+                    {heroInView && (
+                      <iframe
+                        key={activeHeroReel.id}
+                        src={`https://www.youtube.com/embed/${activeHeroReel.id}?autoplay=1&mute=1&loop=1&playlist=${activeHeroReel.id}&controls=0&disablekb=1&modestbranding=1&playsinline=1&rel=0`}
+                        title={`Social Spark Hero Autoplay Reel ${activeHeroReel.label}`}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        className="absolute inset-0 w-full h-full pointer-events-none"
+                      />
+                    )}
+
+                    {/* Edge vignette */}
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/40 z-10" />
+
+                    {/* Tap overlay to open Theatre Lightbox with full audio */}
+                    <button
+                      type="button"
+                      onClick={() => setHeroLightboxIndex(activeHeroReel.index)}
+                      aria-label="Open video with sound"
+                      className="absolute inset-0 z-10 cursor-pointer group flex items-end justify-end p-3 pb-16"
+                    >
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full liquid-glass-pill text-[10px] font-medium text-white opacity-90 group-hover:scale-105 transition-transform">
+                        <Volume2 size={11} className="text-orange-400" />
+                        <span>Tap for Sound</span>
+                      </span>
+                    </button>
+
+                    {/* Top Dynamic Island Pill */}
+                    <div className="pointer-events-none absolute top-3 inset-x-0 flex justify-center z-20">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill font-mono text-[10px] text-white/95">
+                        <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+                        Featured Cut · {activeHeroReel.label}
+                      </span>
+                    </div>
+
+                    {/* Bottom Liquid Glass Reel Switcher Dock */}
+                    <div className="absolute bottom-3 inset-x-3 p-1 rounded-full liquid-glass flex items-center justify-between gap-1 z-20">
+                      {FEATURED_REELS.map((reel, idx) => (
+                        <button
+                          key={reel.id}
+                          type="button"
+                          onClick={() => setHeroReelPos(idx)}
+                          className={`flex-1 py-1.5 rounded-full font-mono text-[10px] transition-all cursor-pointer ${
+                            heroReelPos === idx
+                              ? 'bg-[#F5F5F7] text-black font-semibold'
+                              : 'text-[#A1A1A6] hover:text-white'
+                          }`}
+                        >
+                          Cut {reel.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </TiltSpotlightCard>
+              </div>
             </div>
           </motion.div>
         </div>
-
-        {/* Bottom Fold Discipline Bar */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.35 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-white/[0.08]"
-        >
-          {[
-            { num: '01', label: 'Personal Branding', sub: 'Executive Authority' },
-            { num: '02', label: 'Viral Reels', sub: 'Motion & Storytelling' },
-            { num: '03', label: 'Creator Cohorts', sub: 'Influencer Campaigns' },
-            { num: '04', label: 'Paid Acquisition', sub: 'Creative-First ROAS' },
-          ].map((item) => (
-            <div key={item.num} className="flex items-start gap-3">
-              <span className="font-mono text-[11px] text-[#FF5A1F] mt-0.5">{item.num}</span>
-              <div>
-                <p className="font-display text-sm font-bold text-white">{item.label}</p>
-                <p className="text-xs text-neutral-500">{item.sub}</p>
-              </div>
-            </div>
-          ))}
-        </motion.div>
       </section>
 
       {/* ============================================================
-          ACT II: SCROLL-VELOCITY KINETIC MARQUEE
+          ACT II: APPLE SPATIAL 3D SCROLL CONSOLE REVEAL
          ============================================================ */}
-      <section className="relative py-8 md:py-12 border-y border-white/[0.07] bg-black/40 backdrop-blur-sm overflow-hidden">
-        <VelocityMarquee
-          items={[
-            'PERSONAL BRANDING',
-            'SHORT-FORM CINEMA',
-            'CREATOR CAMPAIGNS',
-            'PERFORMANCE ROAS',
-          ]}
-          baseVelocity={18}
-        />
-        <VelocityMarquee
-          items={[
-            'SOCIAL SPARK DELHI',
-            'HIGH-RETENTION HOOKS',
-            'CULTURAL AUTHORITY',
-            'OMNICHANNEL GROWTH',
-          ]}
-          baseVelocity={15}
-          reverse
-          outlined
-        />
-      </section>
-
-      {/* ============================================================
-          ACT III: 3D PERSPECTIVE SCROLL-UNFOLDING TELEMETRY STAGE
-         ============================================================ */}
-      <section className="relative">
+      <section className="relative border-t border-white/[0.08]">
         <ContainerScroll
           titleComponent={
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/10 font-mono text-[11px] uppercase tracking-[0.2em] text-[#FFB800]">
-                <Flame size={13} />
-                <span>Interactive Studio Deck</span>
-              </div>
-              <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white leading-[1.03]">
-                Creative Meets <br className="hidden sm:block" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB800] via-[#FF5A1F] to-[#FF2E93]">
-                  Compounding Revenue
-                </span>
+            <div className="space-y-2.5">
+              <p className="text-xs font-medium text-[#86868B]">Creative Intelligence</p>
+              <h2 className="font-display text-2xl sm:text-4xl md:text-[2.65rem] font-semibold tracking-tight text-[#F5F5F7] leading-tight">
+                Engineered for watch time.{' '}
+                <span className="text-[#86868B]">Proven in revenue.</span>
               </h2>
-              <p className="text-neutral-400 text-sm md:text-lg max-w-xl mx-auto font-light">
-                Every edit, creator collab, and paid media dollar is tracked inside one clear attribution loop.
-              </p>
             </div>
           }
         >
@@ -169,257 +272,170 @@ const Home = () => {
       </section>
 
       {/* ============================================================
-          ACT IV: INTERACTIVE CAPABILITIES INDEX (STICKY DOSSIER)
-         ============================================================ */}
-      <section className="relative py-20 md:py-32 px-5 md:px-10 max-w-7xl mx-auto border-t border-white/[0.07]">
-        <KineticReveal className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
-          <div>
-            <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#FF5A1F]">
-              Capabilities Index · 01 — 07
-            </span>
-            <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mt-3">
-              How We Scale Brands
-            </h2>
-          </div>
-          <Link
-            to="/services"
-            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-neutral-300 hover:text-white border-b border-white/25 hover:border-[#FF5A1F] pb-1.5 transition-colors self-start md:self-auto"
-          >
-            <span>Explore Full Capabilities</span>
-            <ArrowRight size={14} />
-          </Link>
-        </KineticReveal>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          {/* Interactive Index List */}
-          <div className="lg:col-span-7 divide-y divide-white/[0.08] border-y border-white/[0.08]">
-            {SERVICES_DATA.map((service, idx) => {
-              const isSelected = activeCapIndex === idx;
-              return (
-                <div
-                  key={service.id}
-                  onMouseEnter={() => setActiveCapIndex(idx)}
-                  onClick={() => setActiveCapIndex(idx)}
-                  className={`group py-5 md:py-6 px-3 md:px-4 cursor-pointer transition-all flex items-center justify-between gap-4 rounded-xl ${
-                    isSelected ? 'bg-white/[0.04]' : 'hover:bg-white/[0.02]'
-                  }`}
-                >
-                  <div className="flex items-center gap-4 md:gap-6">
-                    <span
-                      className={`font-mono text-xs transition-colors ${
-                        isSelected ? 'text-[#FF5A1F] font-bold' : 'text-neutral-500'
-                      }`}
-                    >
-                      {service.index}
-                    </span>
-                    <div>
-                      <h3
-                        className={`font-display text-xl sm:text-2xl md:text-3xl font-bold transition-colors ${
-                          isSelected ? 'text-white' : 'text-neutral-400 group-hover:text-neutral-200'
-                        }`}
-                      >
-                        {service.title}
-                      </h3>
-                      <p className="text-xs text-neutral-500 mt-0.5 md:hidden">{service.shortTag}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <span className="hidden md:inline font-mono text-[11px] uppercase tracking-wider text-neutral-500">
-                      {service.shortTag}
-                    </span>
-                    <Link
-                      to={`/services/${service.id}`}
-                      className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all ${
-                        isSelected
-                          ? 'bg-[#FF5A1F] border-[#FF5A1F] text-white rotate-0'
-                          : 'border-white/15 text-neutral-400 group-hover:border-white/40 group-hover:text-white'
-                      }`}
-                      aria-label={`View ${service.title}`}
-                    >
-                      <ArrowUpRight size={16} />
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Sticky Live Dossier Card */}
-          <div className="lg:col-span-5 lg:sticky lg:top-28">
-            <TiltSpotlightCard
-              spotlightColor={`${activeService.accentHex}28`}
-              className="rounded-3xl bg-[#0B0B10]/90 border border-white/12 p-7 md:p-9 shadow-[0_24px_70px_rgba(0,0,0,0.7)]"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <span
-                  className={`px-3 py-1 rounded-full border font-mono text-[10px] uppercase tracking-widest ${activeService.badgeClass}`}
-                >
-                  {activeService.index} · {activeService.shortTag}
-                </span>
-                <Sparkles size={16} style={{ color: activeService.accentHex }} />
-              </div>
-
-              <h3 className="font-display text-2xl md:text-3xl font-extrabold text-white mb-3">
-                {activeService.title}
-              </h3>
-              <p className="text-neutral-300 text-sm md:text-base leading-relaxed mb-6">
-                {activeService.description}
-              </p>
-
-              <div className="grid grid-cols-3 gap-2.5 mb-7 py-4 border-y border-white/[0.08]">
-                {activeService.outcomes.map((o) => (
-                  <div key={o.label}>
-                    <div className="font-display text-lg md:text-xl font-extrabold text-white">
-                      {o.metric}
-                    </div>
-                    <div className="font-mono text-[10px] text-neutral-500 uppercase mt-0.5">
-                      {o.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="space-y-2.5 mb-8">
-                {activeService.deliverables.slice(0, 3).map((item) => (
-                  <div key={item} className="flex items-center gap-2.5 text-sm text-neutral-300">
-                    <CheckCircle2 size={15} style={{ color: activeService.accentHex }} className="shrink-0" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Link
-                  to={`/services/${activeService.id}`}
-                  className="flex-1 py-3.5 px-5 rounded-full bg-white text-black hover:bg-[#FF5A1F] hover:text-white font-bold text-xs uppercase tracking-wider text-center transition-colors"
-                >
-                  Inspect Scope
-                </Link>
-                <Link
-                  to={`/contact?service=${encodeURIComponent(activeService.title)}`}
-                  className="py-3.5 px-5 rounded-full border border-white/15 hover:border-white/40 text-white font-semibold text-xs uppercase tracking-wider transition-colors"
-                >
-                  Enquire
-                </Link>
-              </div>
-            </TiltSpotlightCard>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================
-          ACT V: CAMPAIGN SHOWCASE (INSTANT POSTER + THEATRE LIGHTBOX)
+          ACT III: CAMPAIGN SHOWCASE (SMART VIEWPORT AUTOPLAY)
          ============================================================ */}
       <VideoPortfolio />
 
       {/* ============================================================
-          ACT VI: FOUNDER SPOTLIGHT (NO AGE REFERENCES)
+          ACT IV: CAPABILITIES — LIQUID GLASS BENTO SHOWCASE
          ============================================================ */}
-      <section className="relative py-20 md:py-32 px-5 md:px-10 max-w-7xl mx-auto border-t border-white/[0.07]">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      <section className="relative py-14 md:py-20 px-4 sm:px-6 md:px-8 max-w-6xl mx-auto border-t border-white/[0.08]">
+        <KineticReveal className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 md:mb-10">
+          <div>
+            <p className="text-xs font-medium text-[#86868B] mb-2">Studio Capabilities</p>
+            <h2 className="font-display text-2xl sm:text-4xl font-semibold tracking-tight text-[#F5F5F7]">
+              Everything needed to scale.
+            </h2>
+          </div>
+          <Link
+            to="/services"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#F5F5F7] hover:text-orange-400 transition-colors"
+          >
+            <span>Explore all 7 services</span>
+            <ArrowUpRight size={14} />
+          </Link>
+        </KineticReveal>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {SERVICES_DATA.slice(0, 6).map((service, idx) => (
+            <KineticReveal key={service.id} delay={idx * 0.04}>
+              <TiltSpotlightCard
+                maxTilt={4}
+                className="rounded-2xl liquid-glass-subtle hover:border-white/20 transition-colors"
+              >
+                <Link to={`/services/${service.id}`} className="group flex flex-col h-full p-5 md:p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="font-mono text-[11px] text-[#6E6E73]">{service.index}</span>
+                    <ArrowUpRight
+                      size={15}
+                      className="text-[#6E6E73] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"
+                    />
+                  </div>
+                  <h3 className="font-display text-lg font-semibold text-[#F5F5F7] mb-1.5">
+                    {service.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[#86868B] leading-relaxed mb-4">
+                    {service.description}
+                  </p>
+                  <div className="mt-auto pt-3 border-t border-white/[0.06] flex items-center gap-2 text-[11px] text-[#A1A1A6]">
+                    <CheckCircle2 size={12} className="text-white/60 shrink-0" />
+                    <span className="truncate">{service.deliverables[0]}</span>
+                  </div>
+                </Link>
+              </TiltSpotlightCard>
+            </KineticReveal>
+          ))}
+        </div>
+
+        <KineticReveal delay={0.12} className="mt-4">
+          <Link
+            to={`/services/${SERVICES_DATA[6].id}`}
+            className="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 md:px-6 rounded-2xl liquid-glass-subtle hover:border-white/20 transition-colors"
+          >
+            <div className="flex items-center gap-4">
+              <span className="font-mono text-[11px] text-[#6E6E73]">{SERVICES_DATA[6].index}</span>
+              <div>
+                <h3 className="font-display text-base md:text-lg font-semibold text-[#F5F5F7]">
+                  {SERVICES_DATA[6].title}
+                </h3>
+                <p className="text-xs text-[#86868B]">{SERVICES_DATA[6].subtitle}</p>
+              </div>
+            </div>
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-white shrink-0">
+              <span>View Scope</span>
+              <ArrowUpRight size={14} />
+            </span>
+          </Link>
+        </KineticReveal>
+      </section>
+
+      {/* ============================================================
+          ACT V: FOUNDER PROFILE (EXCLUSIVE TO HOME — NO AGE MENTIONS)
+         ============================================================ */}
+      <section className="relative py-14 md:py-20 px-4 sm:px-6 md:px-8 max-w-6xl mx-auto border-t border-white/[0.08]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           <KineticReveal className="lg:col-span-5">
             <TiltSpotlightCard
-              maxTilt={5}
-              spotlightColor="rgba(255, 90, 31, 0.2)"
-              className="rounded-[2rem] overflow-hidden border border-white/12 bg-[#0B0B10] shadow-2xl"
+              maxTilt={4}
+              className="rounded-[1.75rem] liquid-glass p-2 overflow-hidden max-w-sm mx-auto lg:mx-0"
             >
-              <div className="relative aspect-[4/5]">
+              <div className="relative aspect-[4/5] rounded-[1.35rem] overflow-hidden bg-neutral-950">
                 <img
                   src="/saiyam.jpg"
                   alt="Saiyam Dang — Founder of Social Spark"
                   loading="lazy"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent" />
-                <div className="absolute bottom-6 left-6 right-6">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#FFB800]">
-                    Delhi, India
-                  </span>
-                  <h3 className="font-display text-3xl font-extrabold text-white mt-1">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/15 to-transparent" />
+                <div className="absolute bottom-5 left-5 right-5">
+                  <p className="text-[11px] text-[#A1A1A6]">Delhi, India</p>
+                  <h3 className="font-display text-2xl font-semibold text-[#F5F5F7]">
                     Saiyam Dang
                   </h3>
-                  <p className="text-neutral-300 text-sm">Founder &amp; Creative Director</p>
+                  <p className="text-xs text-[#86868B] mt-0.5">Founder &amp; Visionary</p>
                 </div>
               </div>
             </TiltSpotlightCard>
           </KineticReveal>
 
-          <KineticReveal delay={0.1} className="lg:col-span-7">
-            <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#FF5A1F]">
-              Leadership &amp; Ethos
-            </span>
-            <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mt-3 mb-6 leading-[1.04]">
-              Built for the{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB800] via-[#FF5A1F] to-[#FF2E93]">
-                Algorithmic Era
-              </span>
+          <KineticReveal delay={0.08} className="lg:col-span-7 space-y-5">
+            <p className="text-xs font-medium text-[#86868B]">Meet the Founder</p>
+            <h2 className="font-display text-2xl sm:text-4xl font-semibold tracking-tight text-[#F5F5F7] leading-tight">
+              Built for how culture moves today.
             </h2>
-            <p className="text-neutral-200 text-lg md:text-xl leading-relaxed mb-5 font-light">
+            <p className="text-sm sm:text-base text-[#D1D1D6] leading-relaxed">
               <strong className="text-white font-semibold">Vision is what changes the world.</strong>{' '}
-              Saiyam Dang recognized a widening gap in how brands and individuals scale their digital presence in a feed driven by short-form taste and speed.
+              Saiyam Dang recognized a widening gap between slow traditional marketing retainers and how audiences actually discover, trust, and buy in a short-form world.
             </p>
-            <p className="text-neutral-400 text-base md:text-lg leading-relaxed mb-10">
-              Operating at the intersection of raw creative intuition and disciplined performance marketing, Social Spark was built to replace slow traditional agencies with agile storytelling, vetted creator networks, and measurable commercial growth.
+            <p className="text-sm text-[#86868B] leading-relaxed">
+              Operating from Delhi across domestic and global accounts, Social Spark combines creative direction, vetted creators, and disciplined media buying under one focused team.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-5">
-                <div className="font-display text-2xl font-extrabold text-[#FFB800] mb-1">
-                  Taste-Led Creative
-                </div>
-                <p className="text-neutral-400 text-sm">
-                  Platform-native hooks, motion design, and storytelling people actually share.
-                </p>
-              </div>
-              <div className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-5">
-                <div className="font-display text-2xl font-extrabold text-[#FF2E93] mb-1">
-                  Performance Discipline
-                </div>
-                <p className="text-neutral-400 text-sm">
-                  Creative testing paired with attribution so attention converts into pipeline.
-                </p>
-              </div>
+            <div className="pt-2">
+              <Link
+                to="/about"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-white hover:text-orange-400 transition-colors"
+              >
+                <span>Read Studio Story</span>
+                <ArrowUpRight size={14} />
+              </Link>
             </div>
           </KineticReveal>
         </div>
       </section>
 
-      {/* ============================================================
-          ACT VII: CLOSING EDITORIAL CTA
-         ============================================================ */}
-      <section className="relative py-16 md:py-28 px-5 md:px-10 max-w-7xl mx-auto">
+      {/* Closing Liquid Glass CTA */}
+      <section className="relative py-12 md:py-16 px-4 sm:px-6 md:px-8 max-w-6xl mx-auto">
         <KineticReveal>
-          <div className="relative rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-white/15 bg-gradient-to-br from-[#131018] via-[#0B0B10] to-[#120A08] p-8 sm:p-14 md:p-20 text-center">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.05] border border-white/10 font-mono text-[11px] uppercase tracking-[0.2em] text-[#FFB800] mb-6">
-              Ready When You Are
+          <div className="rounded-[2rem] liquid-glass p-7 sm:p-10 md:p-14 text-center">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill text-[11px] text-[#D1D1D6] mb-5">
+              <Sparkles size={12} className="text-orange-400" />
+              <span>Taking New Client Retainers</span>
             </div>
-            <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white max-w-3xl mx-auto leading-[1.03] mb-6">
-              Let&apos;s Turn Your Next Campaign Into Category Dominance.
+            <h2 className="font-display text-2xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[#F5F5F7] max-w-2xl mx-auto leading-tight mb-4">
+              Ready to build something unmistakable?
             </h2>
-            <p className="text-neutral-400 text-sm sm:text-base md:text-lg max-w-xl mx-auto mb-10 font-light">
-              Work directly with our Delhi studio team on personal branding, short-form production, creators, and paid scaling.
+            <p className="text-sm md:text-base text-[#86868B] max-w-md mx-auto mb-7">
+              Connect directly with our Delhi team on personal branding, short-form production, or paid scaling.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <MagneticButton strength={0.25}>
-                <Link
-                  to="/contact"
-                  className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-[#FF5A1F] hover:bg-[#ff6d38] text-white font-bold text-sm md:text-base transition-all shadow-[0_0_40px_rgba(255,90,31,0.4)]"
-                >
-                  <span>Start a Project</span>
-                  <ArrowUpRight size={18} />
-                </Link>
-              </MagneticButton>
+            <MagneticButton strength={0.2}>
               <Link
-                to="/about"
-                className="px-8 py-4 rounded-full border border-white/15 hover:border-white/35 text-white font-medium text-sm md:text-base transition-colors"
+                to="/contact"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-brand-gradient hover:brightness-110 text-white font-semibold text-sm transition-all shadow-[0_10px_30px_rgba(249,115,22,0.3)]"
               >
-                About Social Spark
+                <span>Start a Project</span>
+                <ArrowUpRight size={15} />
               </Link>
-            </div>
+            </MagneticButton>
           </div>
         </KineticReveal>
       </section>
+
+      <ReelLightbox
+        activeIndex={heroLightboxIndex}
+        onClose={() => setHeroLightboxIndex(null)}
+        onChangeIndex={setHeroLightboxIndex}
+      />
     </>
   );
 };

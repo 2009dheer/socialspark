@@ -8,7 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { TrendingUp, Users, Zap, Eye, Sparkles, BarChart3 } from 'lucide-react';
+import { TrendingUp, Users, Eye, BarChart3 } from 'lucide-react';
 
 type TabKey = 'overview' | 'creators' | 'paid' | 'reels';
 
@@ -27,9 +27,9 @@ const TAB_CONFIG: Record<
   overview: {
     label: 'Overview',
     headline: 'Blended Brand Velocity',
-    subline: 'Combined organic + creator + paid acquisition lift over 7 months',
-    primaryColor: '#FF5A1F',
-    secondaryColor: '#FF2E93',
+    subline: 'Combined organic, creator, and paid acquisition curve',
+    primaryColor: '#F5F5F7',
+    secondaryColor: '#FF5A1F',
     stats: [
       { label: 'Monthly Impressions', value: '3.8M', delta: '+214%' },
       { label: 'Engagement Rate', value: '14.2%', delta: '+38%' },
@@ -47,10 +47,10 @@ const TAB_CONFIG: Record<
   },
   creators: {
     label: 'Creators',
-    headline: 'Creator Seeding & Trust Wave',
-    subline: 'Vetted micro & macro creator cohorts driving earned reach',
-    primaryColor: '#FF2E93',
-    secondaryColor: '#FFB800',
+    headline: 'Creator Seeding & Trust',
+    subline: 'Curated micro & macro creators driving earned reach',
+    primaryColor: '#F5F5F7',
+    secondaryColor: '#FF5A1F',
     stats: [
       { label: 'Active Creators', value: '140+', delta: '+92%' },
       { label: 'Avg. View Ratio', value: '38%', delta: '+19%' },
@@ -68,14 +68,14 @@ const TAB_CONFIG: Record<
   },
   paid: {
     label: 'Paid ROAS',
-    headline: 'Creative-Led Paid Acquisition',
+    headline: 'Creative-Led Paid Scaling',
     subline: 'Weekly hook testing & retargeting funnel efficiency',
-    primaryColor: '#FFB800',
+    primaryColor: '#F5F5F7',
     secondaryColor: '#FF5A1F',
     stats: [
       { label: 'Blended ROAS', value: '4.8x', delta: '+1.9x' },
       { label: 'Hook Variants / Wk', value: '24', delta: 'Tested' },
-      { label: 'CPA Reduction', value: '-39%', delta: 'Optimized' },
+      { label: 'CPA Reduction', value: '-39%', delta: 'Down' },
     ],
     data: [
       { name: 'W1', reach: 5200, conversions: 2100 },
@@ -90,8 +90,8 @@ const TAB_CONFIG: Record<
   reels: {
     label: 'Reels Velocity',
     headline: 'Short-Form Retention Curve',
-    subline: '1.5s visual hooks engineered for algorithmic discovery',
-    primaryColor: '#38BDF8',
+    subline: 'Opening hooks engineered for organic shares & watch time',
+    primaryColor: '#F5F5F7',
     secondaryColor: '#FF5A1F',
     stats: [
       { label: '3s Hook Hold', value: '76%', delta: '+28%' },
@@ -115,20 +115,10 @@ export const DashboardMockup = () => {
   const current = TAB_CONFIG[activeTab];
 
   return (
-    <div className="w-full text-[#F5F3EE] flex flex-col lg:flex-row">
-      {/* Left Rail */}
-      <div className="flex lg:w-56 flex-row lg:flex-col justify-between lg:justify-start gap-2 border-b lg:border-b-0 lg:border-r border-white/[0.07] bg-white/[0.015] p-3 md:p-5 overflow-x-auto hide-scrollbar">
-        <div className="hidden lg:flex items-center gap-2.5 mb-6 px-2">
-          <div className="w-7 h-7 rounded-lg bg-[#FF5A1F]/15 border border-[#FF5A1F]/40 flex items-center justify-center">
-            <Zap size={14} className="text-[#FF5A1F]" />
-          </div>
-          <div>
-            <p className="font-display text-xs font-bold tracking-wide uppercase">Spark Deck</p>
-            <p className="font-mono text-[10px] text-neutral-500">v2.6 Telemetry</p>
-          </div>
-        </div>
-
-        <div className="flex flex-row lg:flex-col gap-1.5 min-w-max lg:min-w-0 w-full">
+    <div className="w-full text-[#F5F5F7] flex flex-col md:flex-row">
+      {/* Compact Sidebar */}
+      <div className="flex md:w-48 flex-row md:flex-col justify-between md:justify-start gap-1.5 border-b md:border-b-0 md:border-r border-white/[0.08] bg-white/[0.015] p-3 md:p-4 overflow-x-auto hide-scrollbar">
+        <div className="flex flex-row md:flex-col gap-1 min-w-max md:min-w-0 w-full">
           {(Object.keys(TAB_CONFIG) as TabKey[]).map((key) => {
             const isActive = activeTab === key;
             return (
@@ -136,61 +126,53 @@ export const DashboardMockup = () => {
                 key={key}
                 type="button"
                 onClick={() => setActiveTab(key)}
-                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-medium transition-all text-left cursor-pointer ${
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all text-left cursor-pointer ${
                   isActive
-                    ? 'bg-white text-black font-semibold shadow-sm'
-                    : 'text-neutral-400 hover:bg-white/[0.05] hover:text-white'
+                    ? 'bg-[#F5F5F7] text-black font-semibold'
+                    : 'text-[#A1A1A6] hover:bg-white/[0.05] hover:text-white'
                 }`}
               >
-                {key === 'overview' && <BarChart3 size={15} />}
-                {key === 'creators' && <Users size={15} />}
-                {key === 'paid' && <TrendingUp size={15} />}
-                {key === 'reels' && <Eye size={15} />}
+                {key === 'overview' && <BarChart3 size={14} />}
+                {key === 'creators' && <Users size={14} />}
+                {key === 'paid' && <TrendingUp size={14} />}
+                {key === 'reels' && <Eye size={14} />}
                 <span>{TAB_CONFIG[key].label}</span>
               </button>
             );
           })}
         </div>
 
-        <div className="hidden lg:block mt-auto pt-6 border-t border-white/[0.06]">
-          <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
-            <div className="flex items-center gap-1.5 text-[10px] font-mono text-amber-400 uppercase mb-1">
-              <Sparkles size={11} /> Interactive Preview
-            </div>
-            <p className="text-[11px] text-neutral-400 leading-relaxed">
-              Click any channel above to inspect sample campaign curves.
-            </p>
-          </div>
-        </div>
+        <p className="hidden md:block mt-auto pt-4 border-t border-white/[0.06] text-[11px] text-[#6E6E73] leading-relaxed">
+          Interactive benchmark view across Delhi campaigns.
+        </p>
       </div>
 
-      {/* Main Analytics Canvas */}
-      <div className="flex-1 p-5 md:p-8 bg-gradient-to-br from-[#0B0B0F] to-[#08080B]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+      {/* Main Console */}
+      <div className="flex-1 p-4 md:p-6 bg-black/40">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
           <div>
-            <h3 className="font-display text-xl md:text-2xl font-bold tracking-tight text-white">
+            <h3 className="font-display text-lg md:text-xl font-semibold tracking-tight text-[#F5F5F7]">
               {current.headline}
             </h3>
-            <p className="text-neutral-400 text-xs md:text-sm mt-0.5">{current.subline}</p>
+            <p className="text-[#86868B] text-xs mt-0.5">{current.subline}</p>
           </div>
-          <span className="self-start sm:self-auto px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 font-mono text-[10px] uppercase tracking-widest text-neutral-300">
-            Delhi Studio Benchmark
+          <span className="self-start sm:self-auto px-2.5 py-1 rounded-full liquid-glass-pill font-mono text-[10px] text-[#A1A1A6]">
+            Interactive Demo
           </span>
         </div>
 
-        {/* Stat Strips */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-6">
+        <div className="grid grid-cols-3 gap-2.5 md:gap-3 mb-4">
           {current.stats.map((stat, i) => (
             <div
               key={i}
-              className="rounded-2xl bg-white/[0.025] border border-white/[0.07] p-4 flex flex-col justify-between"
+              className="rounded-xl bg-white/[0.03] border border-white/[0.08] p-3 flex flex-col justify-between"
             >
-              <span className="text-neutral-400 text-xs font-medium">{stat.label}</span>
-              <div className="flex items-baseline justify-between mt-3">
-                <span className="font-display text-2xl md:text-3xl font-bold text-white">
+              <span className="text-[#86868B] text-[11px] font-medium truncate">{stat.label}</span>
+              <div className="flex items-baseline justify-between gap-1 mt-1.5">
+                <span className="font-display text-lg md:text-2xl font-semibold text-[#F5F5F7]">
                   {stat.value}
                 </span>
-                <span className="font-mono text-[11px] text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-2 py-0.5 rounded-md">
+                <span className="font-mono text-[10px] text-emerald-400">
                   {stat.delta}
                 </span>
               </div>
@@ -198,39 +180,16 @@ export const DashboardMockup = () => {
           ))}
         </div>
 
-        {/* Chart */}
-        <div className="rounded-2xl bg-white/[0.02] border border-white/[0.07] p-4 md:p-5">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-mono uppercase tracking-wider text-neutral-400">
-              Reach vs. Conversion Momentum
-            </span>
-            <div className="flex items-center gap-4 text-[11px] font-mono text-neutral-400">
-              <span className="flex items-center gap-1.5">
-                <span
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: current.primaryColor }}
-                />
-                Reach
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: current.secondaryColor }}
-                />
-                Impact
-              </span>
-            </div>
-          </div>
-
-          <div className="h-[190px] md:h-[220px] w-full min-w-0">
+        <div className="rounded-xl bg-white/[0.02] border border-white/[0.07] p-3.5 md:p-4">
+          <div className="h-[155px] md:h-[175px] w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-              <AreaChart data={current.data} margin={{ top: 6, right: 6, left: -24, bottom: 0 }}>
+              <AreaChart data={current.data} margin={{ top: 4, right: 6, left: -26, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="sparkPrimaryGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={current.primaryColor} stopOpacity={0.35} />
+                  <linearGradient id="appleSilverGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={current.primaryColor} stopOpacity={0.22} />
                     <stop offset="95%" stopColor={current.primaryColor} stopOpacity={0} />
                   </linearGradient>
-                  <linearGradient id="sparkSecondaryGrad" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient id="appleSparkGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor={current.secondaryColor} stopOpacity={0.28} />
                     <stop offset="95%" stopColor={current.secondaryColor} stopOpacity={0} />
                   </linearGradient>
@@ -238,42 +197,42 @@ export const DashboardMockup = () => {
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
                 <XAxis
                   dataKey="name"
-                  stroke="rgba(255,255,255,0.35)"
-                  fontSize={11}
+                  stroke="rgba(255,255,255,0.3)"
+                  fontSize={10}
                   tickLine={false}
                   axisLine={false}
                 />
                 <YAxis
-                  stroke="rgba(255,255,255,0.35)"
-                  fontSize={11}
+                  stroke="rgba(255,255,255,0.3)"
+                  fontSize={10}
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(v) => `${Math.round(v / 1000)}k`}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#0E0E13',
-                    borderColor: 'rgba(255,255,255,0.12)',
-                    borderRadius: '12px',
-                    fontSize: '12px',
+                    backgroundColor: '#111115',
+                    borderColor: 'rgba(255,255,255,0.14)',
+                    borderRadius: '10px',
+                    fontSize: '11px',
                   }}
-                  itemStyle={{ color: '#F5F3EE' }}
+                  itemStyle={{ color: '#F5F5F7' }}
                 />
                 <Area
                   type="monotone"
                   dataKey="reach"
                   stroke={current.primaryColor}
-                  strokeWidth={2.5}
+                  strokeWidth={2}
                   fillOpacity={1}
-                  fill="url(#sparkPrimaryGrad)"
+                  fill="url(#appleSilverGrad)"
                 />
                 <Area
                   type="monotone"
                   dataKey="conversions"
                   stroke={current.secondaryColor}
-                  strokeWidth={2.5}
+                  strokeWidth={2}
                   fillOpacity={1}
-                  fill="url(#sparkSecondaryGrad)"
+                  fill="url(#appleSparkGrad)"
                 />
               </AreaChart>
             </ResponsiveContainer>

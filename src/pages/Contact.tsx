@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Mail, Phone, MapPin, Send, ArrowUpRight } from 'lucide-react';
 import { SERVICES_DATA } from '../data/servicesData';
-import { KineticLine, TiltSpotlightCard, MagneticButton } from '../components/motion/MotionPrimitives';
+import { SmoothLine, TiltSpotlightCard, MagneticButton } from '../components/motion/MotionPrimitives';
 
 const SERVICE_OPTIONS = [...SERVICES_DATA.map((s) => s.title), 'Other Inquiry'];
 
@@ -37,7 +37,7 @@ const Contact = () => {
       '',
       `*Name:* ${formData.name.trim()}`,
       `*Email:* ${formData.email.trim()}`,
-      `*Capability:* ${formData.subject}`,
+      `*Service:* ${formData.subject}`,
       `*Brief:* ${formData.message.trim()}`,
     ].join('\n');
 
@@ -56,116 +56,106 @@ const Contact = () => {
   };
 
   return (
-    <section className="relative pb-24 px-5 md:px-10 pt-28 md:pt-40 max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-        {/* Left Studio Desk */}
+    <section className="relative pb-20 px-4 sm:px-6 md:px-8 pt-24 md:pt-32 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+        {/* Left Studio Info */}
         <div className="lg:col-span-5">
-          <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-[#FF5A1F] mb-5">
-            <span>Start A Project · Delhi Studio</span>
-          </div>
-
-          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-[-0.03em] text-white leading-[0.98] mb-6 uppercase">
-            <KineticLine delay={0.04}>Let&apos;s Spark</KineticLine>
-            <KineticLine delay={0.12}>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB800] via-[#FF5A1F] to-[#FF2E93]">
-                Something Iconic.
-              </span>
-            </KineticLine>
-          </h1>
-
-          <p className="text-neutral-300 text-base md:text-lg leading-relaxed mb-10 font-light">
-            Tell us what you&apos;re building. Our creative and performance team replies within 24 hours on WhatsApp and email.
+          <p className="text-xs font-medium text-[#86868B] mb-3">
+            Start a Project · Delhi Studio
           </p>
 
-          <div className="space-y-4">
+          <h1 className="font-display text-3xl sm:text-5xl font-semibold tracking-[-0.03em] text-[#F5F5F7] leading-[1.05] mb-4">
+            <SmoothLine delay={0.04}>Let&apos;s spark</SmoothLine>
+            <SmoothLine delay={0.1}>
+              something{' '}
+              <span className="font-bebas tracking-wide text-brand-gradient font-normal text-4xl sm:text-5xl align-baseline">
+                UNMISTAKABLE.
+              </span>
+            </SmoothLine>
+          </h1>
+
+          <p className="font-outfit text-[#A1A1A6] text-sm sm:text-base leading-relaxed mb-8 font-light">
+            Tell us what you&apos;re building. Our team in Delhi replies within 24 hours on WhatsApp and email.
+          </p>
+
+          <div className="space-y-3">
             <a
               href="mailto:newsocialspark@gmail.com"
-              className="flex items-center justify-between p-4 rounded-2xl bg-[#0B0B10]/90 border border-white/10 hover:border-[#FF5A1F]/50 transition-colors group"
+              className="flex items-center justify-between p-4 rounded-2xl liquid-glass-subtle hover:border-white/25 transition-colors group"
             >
-              <div className="flex items-center gap-4 min-w-0">
-                <div className="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0">
-                  <Mail className="text-[#FF5A1F]" size={18} />
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div className="w-10 h-10 rounded-xl liquid-glass-pill flex items-center justify-center shrink-0">
+                  <Mail className="text-orange-400" size={16} />
                 </div>
                 <div className="min-w-0">
-                  <p className="font-mono text-[10px] uppercase tracking-wider text-neutral-500">
-                    Email Studio
-                  </p>
-                  <p className="text-sm sm:text-base font-medium text-white truncate">
+                  <p className="text-[11px] text-[#6E6E73]">Email</p>
+                  <p className="text-sm font-medium text-white truncate">
                     newsocialspark@gmail.com
                   </p>
                 </div>
               </div>
-              <ArrowUpRight size={16} className="text-neutral-500 group-hover:text-white shrink-0" />
+              <ArrowUpRight size={15} className="text-[#6E6E73] group-hover:text-white shrink-0" />
             </a>
 
             <a
               href="tel:+919996210648"
-              className="flex items-center justify-between p-4 rounded-2xl bg-[#0B0B10]/90 border border-white/10 hover:border-[#FFB800]/50 transition-colors group"
+              className="flex items-center justify-between p-4 rounded-2xl liquid-glass-subtle hover:border-white/25 transition-colors group"
             >
-              <div className="flex items-center gap-4">
-                <div className="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0">
-                  <Phone className="text-[#FFB800]" size={18} />
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl liquid-glass-pill flex items-center justify-center shrink-0">
+                  <Phone className="text-yellow-400" size={16} />
                 </div>
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-wider text-neutral-500">
-                    Direct Line
-                  </p>
-                  <p className="text-sm sm:text-base font-medium text-white">
-                    +91 99962 10648
-                  </p>
+                  <p className="text-[11px] text-[#6E6E73]">Phone</p>
+                  <p className="text-sm font-medium text-white">+91 99962 10648</p>
                 </div>
               </div>
-              <ArrowUpRight size={16} className="text-neutral-500 group-hover:text-white shrink-0" />
+              <ArrowUpRight size={15} className="text-[#6E6E73] group-hover:text-white shrink-0" />
             </a>
 
             <a
               href="https://maps.google.com/?q=Delhi,+India"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between p-4 rounded-2xl bg-[#0B0B10]/90 border border-white/10 hover:border-[#FF2E93]/50 transition-colors group"
+              className="flex items-center justify-between p-4 rounded-2xl liquid-glass-subtle hover:border-white/25 transition-colors group"
             >
-              <div className="flex items-center gap-4">
-                <div className="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0">
-                  <MapPin className="text-[#FF2E93]" size={18} />
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl liquid-glass-pill flex items-center justify-center shrink-0">
+                  <MapPin className="text-pink-400" size={16} />
                 </div>
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-wider text-neutral-500">
-                    Headquarters
-                  </p>
-                  <p className="text-sm sm:text-base font-medium text-white">
-                    Delhi, India (Global Operations)
-                  </p>
+                  <p className="text-[11px] text-[#6E6E73]">Studio Location</p>
+                  <p className="text-sm font-medium text-white">Delhi, India (Global Operations)</p>
                 </div>
               </div>
-              <ArrowUpRight size={16} className="text-neutral-500 group-hover:text-white shrink-0" />
+              <ArrowUpRight size={15} className="text-[#6E6E73] group-hover:text-white shrink-0" />
             </a>
           </div>
         </div>
 
-        {/* Right Interactive Inquiry Form */}
+        {/* Right Liquid Glass Form */}
         <div className="lg:col-span-7">
           <TiltSpotlightCard
-            maxTilt={3}
-            spotlightColor="rgba(255, 90, 31, 0.16)"
-            className="rounded-[2rem] bg-[#0B0B10]/92 border border-white/12 p-6 sm:p-10 md:p-12 shadow-[0_25px_80px_rgba(0,0,0,0.75)]"
+            maxTilt={2}
+            className="rounded-[2rem] liquid-glass p-5 sm:p-8 md:p-10"
           >
             {isSubmitted ? (
-              <div className="flex flex-col items-center justify-center text-center py-20">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center mb-6">
-                  <Send className="text-emerald-400" size={26} />
+              <div className="flex flex-col items-center justify-center text-center py-16">
+                <div className="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center mb-5">
+                  <Send className="text-emerald-400" size={22} />
                 </div>
-                <h2 className="font-display text-2xl font-bold text-white mb-2">
-                  Opening WhatsApp Studio...
+                <h2 className="font-display text-xl font-semibold text-white mb-2">
+                  Opening WhatsApp...
                 </h2>
-                <p className="text-neutral-400 text-sm max-w-sm">
-                  Your project brief is pre-filled and ready. Tap Send in WhatsApp to connect directly.
+                <p className="text-[#86868B] text-sm max-w-xs">
+                  Your brief is pre-filled and ready. Tap Send in WhatsApp to connect directly.
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div className="space-y-2">
-                    <label className="font-mono text-[11px] uppercase tracking-wider text-neutral-400 block">
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-[#A1A1A6] block">
                       Full Name
                     </label>
                     <input
@@ -175,11 +165,11 @@ const Contact = () => {
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="Your name"
-                      className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/12 focus:border-[#FF5A1F] focus:outline-none transition-colors text-sm text-white placeholder:text-neutral-600"
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/12 focus:border-orange-500 focus:outline-none transition-colors text-sm text-white placeholder:text-[#6E6E73]"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="font-mono text-[11px] uppercase tracking-wider text-neutral-400 block">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-[#A1A1A6] block">
                       Email Address
                     </label>
                     <input
@@ -189,15 +179,15 @@ const Contact = () => {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="you@company.com"
-                      className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/12 focus:border-[#FF5A1F] focus:outline-none transition-colors text-sm text-white placeholder:text-neutral-600"
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/12 focus:border-orange-500 focus:outline-none transition-colors text-sm text-white placeholder:text-[#6E6E73]"
                     />
                   </div>
                 </div>
 
-                {/* All Services Interactive Selector Pills */}
-                <div className="space-y-2.5">
-                  <label className="font-mono text-[11px] uppercase tracking-wider text-neutral-400 block">
-                    Select Capability / Service
+                {/* All Services Interactive Pills */}
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-[#A1A1A6] block">
+                    Select Service / Scope
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {SERVICE_OPTIONS.map((serviceName) => {
@@ -209,10 +199,10 @@ const Contact = () => {
                           onClick={() =>
                             setFormData((prev) => ({ ...prev, subject: serviceName }))
                           }
-                          className={`px-3.5 py-2 rounded-full text-xs font-medium transition-all cursor-pointer border ${
+                          className={`px-3.5 py-2 rounded-full text-xs font-medium transition-all cursor-pointer ${
                             active
-                              ? 'bg-[#FF5A1F] border-[#FF5A1F] text-white font-semibold shadow-[0_0_20px_rgba(255,90,31,0.3)]'
-                              : 'bg-white/[0.03] border-white/10 text-neutral-300 hover:border-white/30 hover:text-white'
+                              ? 'bg-[#F5F5F7] text-black font-semibold shadow-sm'
+                              : 'liquid-glass-pill text-[#D1D1D6] hover:text-white'
                           }`}
                         >
                           {serviceName}
@@ -222,8 +212,8 @@ const Contact = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="font-mono text-[11px] uppercase tracking-wider text-neutral-400 block">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-[#A1A1A6] block">
                     Project Brief
                   </label>
                   <textarea
@@ -232,18 +222,18 @@ const Contact = () => {
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    placeholder="Share your brand, goals, timeline, and links..."
-                    className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/12 focus:border-[#FF5A1F] focus:outline-none transition-colors resize-none text-sm text-white placeholder:text-neutral-600"
+                    placeholder="Share your brand, goals, and timeline..."
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/12 focus:border-orange-500 focus:outline-none transition-colors resize-none text-sm text-white placeholder:text-[#6E6E73]"
                   />
                 </div>
 
                 <MagneticButton className="w-full" strength={0.14}>
                   <button
                     type="submit"
-                    className="w-full py-4 rounded-full bg-gradient-to-r from-[#FF5A1F] via-[#FF5A1F] to-[#FF2E93] hover:brightness-110 text-white font-bold text-sm uppercase tracking-wider shadow-[0_0_32px_rgba(255,90,31,0.35)] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full py-3.5 rounded-full bg-brand-gradient hover:brightness-110 text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_10px_28px_rgba(249,115,22,0.28)]"
                   >
                     <span>Send Brief via WhatsApp</span>
-                    <Send size={16} />
+                    <Send size={15} />
                   </button>
                 </MagneticButton>
               </form>

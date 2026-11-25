@@ -3,7 +3,7 @@ import { useParams, Link, Navigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { SERVICES_DATA } from '../data/servicesData';
 import {
-  KineticLine,
+  SmoothLine,
   KineticReveal,
   TiltSpotlightCard,
   MagneticButton,
@@ -22,132 +22,119 @@ const ServiceDetails = () => {
   const nextService = SERVICES_DATA[(currentIndex + 1) % SERVICES_DATA.length];
 
   return (
-    <section className="relative min-h-screen pt-28 md:pt-36 pb-24 px-5 md:px-10 max-w-5xl mx-auto">
+    <section className="relative min-h-screen pt-24 md:pt-32 pb-20 px-4 sm:px-6 md:px-8 max-w-4xl mx-auto">
       <Link
         to="/services"
-        className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors mb-10 font-mono text-xs uppercase tracking-widest"
+        className="inline-flex items-center gap-2 text-[#86868B] hover:text-white transition-colors mb-8 text-xs font-medium"
       >
-        <ArrowLeft size={15} /> All Capabilities
+        <ArrowLeft size={14} /> All Capabilities
       </Link>
 
       {/* Header */}
-      <div className="mb-12">
-        <div className="flex flex-wrap items-center gap-3 mb-6">
-          <span className="font-mono text-xs text-neutral-500">CAPABILITY {service.index} / 07</span>
-          <span
-            className={`px-3 py-1 rounded-full border font-mono text-[10px] uppercase tracking-wider ${service.badgeClass}`}
-          >
+      <div className="mb-10">
+        <div className="flex flex-wrap items-center gap-2.5 mb-4">
+          <span className="font-mono text-xs text-[#6E6E73]">
+            Capability {service.index} / 07
+          </span>
+          <span className="px-3 py-0.5 rounded-full liquid-glass-pill text-[11px] font-medium text-[#D1D1D6]">
             {service.shortTag}
           </span>
         </div>
 
-        <h1 className="font-display text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-[-0.03em] text-white leading-[0.98] mb-5 uppercase">
-          <KineticLine>{service.title}</KineticLine>
+        <h1 className="font-display text-3xl sm:text-5xl md:text-6xl font-semibold tracking-[-0.03em] text-[#F5F5F7] leading-[1.03] mb-4">
+          <SmoothLine>{service.title}</SmoothLine>
         </h1>
 
-        <p
-          className={`text-xl md:text-2xl font-medium text-transparent bg-clip-text bg-gradient-to-r ${service.accentClass}`}
-        >
+        <p className="font-outfit text-lg sm:text-xl text-brand-gradient font-normal">
           {service.subtitle}
         </p>
       </div>
 
-      {/* Benchmark Metrics Row */}
-      <KineticReveal className="grid grid-cols-3 gap-3 md:gap-5 mb-12">
+      {/* Benchmark Row */}
+      <KineticReveal className="grid grid-cols-3 gap-3 sm:gap-4 mb-10">
         {service.outcomes.map((o) => (
           <div
             key={o.label}
-            className="rounded-2xl bg-[#0B0B10]/90 border border-white/10 p-4 md:p-6"
+            className="rounded-2xl liquid-glass-subtle p-4 sm:p-5"
           >
-            <div className="font-display text-2xl sm:text-3xl md:text-4xl font-extrabold text-white">
+            <div className="font-display text-xl sm:text-3xl font-semibold text-[#F5F5F7]">
               {o.metric}
             </div>
-            <div className="font-mono text-[10px] md:text-xs text-neutral-400 uppercase tracking-wider mt-1">
-              {o.label}
-            </div>
+            <div className="text-[11px] sm:text-xs text-[#86868B] mt-1">{o.label}</div>
           </div>
         ))}
       </KineticReveal>
 
-      {/* Narrative */}
-      <KineticReveal delay={0.05} className="mb-12">
-        <p className="text-neutral-300 text-base sm:text-lg md:text-xl leading-relaxed font-light">
+      {/* Overview Text */}
+      <KineticReveal delay={0.05} className="mb-10">
+        <p className="font-outfit text-[#D1D1D6] text-base sm:text-lg leading-relaxed font-light">
           {service.detailedText}
         </p>
       </KineticReveal>
 
-      {/* Deliverables Dossier */}
-      <KineticReveal delay={0.1} className="mb-14">
+      {/* Deliverables Card */}
+      <KineticReveal delay={0.1} className="mb-12">
         <TiltSpotlightCard
-          maxTilt={4}
-          spotlightColor={`${service.accentHex}24`}
-          className="rounded-[2rem] bg-[#0B0B10]/90 border border-white/12 p-7 md:p-11"
+          maxTilt={3}
+          className="rounded-[2rem] liquid-glass p-6 sm:p-9"
         >
-          <div className="flex items-center justify-between mb-7 pb-4 border-b border-white/[0.08]">
-            <h2 className="font-display text-2xl font-bold text-white">What&apos;s Included</h2>
-            <span className="font-mono text-xs uppercase tracking-widest text-neutral-500">
-              Studio Deliverables
-            </span>
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/[0.08]">
+            <h2 className="font-display text-xl font-semibold text-[#F5F5F7]">
+              What&apos;s Included
+            </h2>
+            <span className="font-mono text-[11px] text-[#6E6E73] uppercase">Deliverables</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {service.deliverables.map((item) => (
-              <div key={item} className="flex items-start gap-3.5">
-                <CheckCircle2
-                  size={20}
-                  style={{ color: service.accentHex }}
-                  className="shrink-0 mt-0.5"
-                />
-                <span className="text-neutral-200 text-sm md:text-base font-medium">{item}</span>
+              <div key={item} className="flex items-start gap-3">
+                <CheckCircle2 size={17} className="text-orange-400 shrink-0 mt-0.5" />
+                <span className="text-[#D1D1D6] text-sm font-medium">{item}</span>
               </div>
             ))}
           </div>
 
-          <div className="mt-10 pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <p className="text-sm text-neutral-400">
+          <div className="mt-8 pt-6 border-t border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <p className="text-xs sm:text-sm text-[#86868B]">
               Ready to launch <strong className="text-white">{service.title}</strong> with our Delhi team?
             </p>
-            <MagneticButton strength={0.22}>
+            <MagneticButton strength={0.18} className="w-full sm:w-auto">
               <Link
                 to={`/contact?service=${encodeURIComponent(service.title)}`}
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-[#FF5A1F] hover:bg-[#ff6d38] text-white font-bold text-sm uppercase tracking-wider shadow-[0_0_25px_rgba(255,90,31,0.35)] transition-colors"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-brand-gradient hover:brightness-110 text-white font-semibold text-sm transition-all shadow-[0_8px_24px_rgba(249,115,22,0.28)]"
               >
                 <span>Enquire About This</span>
-                <ArrowUpRight size={16} />
+                <ArrowUpRight size={15} />
               </Link>
             </MagneticButton>
           </div>
         </TiltSpotlightCard>
       </KineticReveal>
 
-      {/* Prev / Next Capability Navigation */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-8 border-t border-white/[0.08]">
+      {/* Prev / Next Navigation */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-6 border-t border-white/[0.08]">
         <Link
           to={`/services/${prevService.id}`}
-          className="group p-5 rounded-2xl bg-white/[0.025] hover:bg-white/[0.05] border border-white/[0.08] transition-all flex items-center justify-between"
+          className="group p-4 rounded-2xl liquid-glass-subtle hover:border-white/25 transition-all"
         >
-          <div>
-            <span className="font-mono text-[10px] uppercase tracking-widest text-neutral-500 flex items-center gap-1.5">
-              <ArrowLeft size={12} /> Previous
-            </span>
-            <p className="font-display text-lg font-bold text-white group-hover:text-[#FFB800] transition-colors mt-1">
-              {prevService.title}
-            </p>
-          </div>
+          <span className="text-[11px] text-[#6E6E73] flex items-center gap-1">
+            <ArrowLeft size={12} /> Previous
+          </span>
+          <p className="font-display text-base font-semibold text-[#F5F5F7] mt-1">
+            {prevService.title}
+          </p>
         </Link>
 
         <Link
           to={`/services/${nextService.id}`}
-          className="group p-5 rounded-2xl bg-white/[0.025] hover:bg-white/[0.05] border border-white/[0.08] transition-all flex items-center justify-between text-right sm:justify-end"
+          className="group p-4 rounded-2xl liquid-glass-subtle hover:border-white/25 transition-all sm:text-right"
         >
-          <div>
-            <span className="font-mono text-[10px] uppercase tracking-widest text-neutral-500 flex items-center justify-end gap-1.5">
-              Next <ArrowRight size={12} />
-            </span>
-            <p className="font-display text-lg font-bold text-white group-hover:text-[#FF5A1F] transition-colors mt-1">
-              {nextService.title}
-            </p>
-          </div>
+          <span className="text-[11px] text-[#6E6E73] flex items-center sm:justify-end gap-1">
+            Next <ArrowRight size={12} />
+          </span>
+          <p className="font-display text-base font-semibold text-[#F5F5F7] mt-1">
+            {nextService.title}
+          </p>
         </Link>
       </div>
     </section>

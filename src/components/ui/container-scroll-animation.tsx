@@ -15,23 +15,23 @@ export const ContainerScroll = ({
   });
 
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 140,
+    stiffness: 130,
     damping: 26,
     restDelta: 0.001,
   });
 
-  const rotate = useTransform(smoothProgress, [0.05, 0.55], [22, 0]);
-  const scale = useTransform(smoothProgress, [0.05, 0.55, 0.92], [0.88, 1, 0.97]);
-  const titleY = useTransform(smoothProgress, [0.05, 0.55], [40, -18]);
-  const opacity = useTransform(smoothProgress, [0.02, 0.25], [0.35, 1]);
+  const rotate = useTransform(smoothProgress, [0.06, 0.52], [18, 0]);
+  const scale = useTransform(smoothProgress, [0.06, 0.52, 0.92], [0.91, 1, 0.98]);
+  const titleY = useTransform(smoothProgress, [0.06, 0.52], [28, -10]);
+  const opacity = useTransform(smoothProgress, [0.02, 0.25], [0.4, 1]);
 
   return (
     <div
-      className="py-16 md:py-28 flex items-center justify-center relative px-4 md:px-10"
+      className="py-12 md:py-20 flex items-center justify-center relative px-5 md:px-8"
       ref={containerRef}
     >
       <div
-        className="w-full max-w-6xl relative"
+        className="w-full max-w-4xl relative"
         style={{
           perspective: '1300px',
         }}
@@ -55,7 +55,7 @@ const Header = ({
   return (
     <motion.div
       style={{ y: translateY }}
-      className="max-w-4xl mx-auto text-center mb-8 md:mb-12 will-change-transform"
+      className="max-w-2xl mx-auto text-center mb-6 md:mb-8 will-change-transform"
     >
       {titleComponent}
     </motion.div>
@@ -81,27 +81,24 @@ const ScrollCard = ({
         opacity,
         transformOrigin: 'center bottom',
       }}
-      className="max-w-5xl mx-auto w-full p-[1px] rounded-[1.75rem] md:rounded-[2.5rem] bg-gradient-to-b from-white/20 via-white/10 to-orange-500/20 shadow-[0_30px_90px_rgba(0,0,0,0.85),0_0_60px_rgba(255,90,31,0.12)] will-change-transform"
+      className="max-w-4xl mx-auto w-full rounded-[1.5rem] md:rounded-[2rem] liquid-glass overflow-hidden will-change-transform"
     >
-      <div className="w-full overflow-hidden rounded-[1.7rem] md:rounded-[2.45rem] bg-[#0B0B0F] relative flex flex-col">
-        {/* Studio Browser Chrome */}
-        <div className="h-10 md:h-12 w-full border-b border-white/[0.07] bg-white/[0.02] flex items-center justify-between px-4 md:px-6 shrink-0">
-          <div className="flex gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-white/15" />
-            <span className="w-2.5 h-2.5 rounded-full bg-white/15" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FF5A1F]" />
-          </div>
-          <div className="px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.06] font-mono text-[10px] md:text-xs text-neutral-400 tracking-wider">
-            socialspark.co.in / growth-telemetry
-          </div>
-          <div className="flex items-center gap-1.5 font-mono text-[10px] text-emerald-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="hidden sm:inline">LIVE</span>
-          </div>
+      {/* Clean macOS/visionOS Glass Chrome */}
+      <div className="h-9 md:h-10 w-full border-b border-white/[0.08] bg-white/[0.02] flex items-center justify-between px-4 md:px-5 shrink-0">
+        <div className="flex gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
+          <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
+          <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
         </div>
-        {/* Interactive Content */}
-        <div className="relative">{children}</div>
+        <div className="px-3 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.07] font-mono text-[10px] text-[#A1A1A6]">
+          socialspark.co.in
+        </div>
+        <div className="flex items-center gap-1.5 text-[10px] font-mono text-[#86868B]">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <span>LIVE</span>
+        </div>
       </div>
+      <div className="relative">{children}</div>
     </motion.div>
   );
 };
