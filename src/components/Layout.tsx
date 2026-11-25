@@ -439,7 +439,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const isHome = location.pathname === '/';
 
   return (
-    <div className="min-h-screen bg-black text-[#F5F5F7] relative">
+    <div className="min-h-screen bg-black text-[#F5F5F7] relative overflow-x-clip">
       {/* Top Progress Bar in Brand Gradient */}
       <motion.div
         style={{ scaleX }}

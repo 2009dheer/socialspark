@@ -28,6 +28,7 @@ html {
   background-color: #000000;
   color: #F5F5F7;
   scroll-behavior: auto;
+  overflow-x: clip;
   -webkit-tap-highlight-color: transparent;
 }
 

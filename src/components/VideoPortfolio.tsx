@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, X, ChevronRight, ChevronLeft, Volume2 } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Play, X, ChevronRight, ChevronLeft, Volume2, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { TiltSpotlightCard } from './motion/MotionPrimitives';
 
@@ -48,17 +49,42 @@ export const ReelLightbox: React.FC<{
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeIndex]);
 
+  const pushedHistoryRef = useRef(false);
+  const closedByPopstateRef = useRef(false);
+
   useEffect(() => {
     if (activeIndex !== null) {
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
+
+      // Support mobile phone Back button/swipe gesture to close lightbox smoothly
+      closedByPopstateRef.current = false;
+      if (!pushedHistoryRef.current) {
+        window.history.pushState({ ...(window.history.state || {}), reelLightbox: true }, '');
+        pushedHistoryRef.current = true;
+      }
+
+      const handlePopState = () => {
+        if (pushedHistoryRef.current) {
+          pushedHistoryRef.current = false;
+          closedByPopstateRef.current = true;
+          onClose();
+        }
+      };
+
+      window.addEventListener('popstate', handlePopState);
       return () => {
+        window.removeEventListener('popstate', handlePopState);
         document.body.style.overflow = originalOverflow;
+        if (pushedHistoryRef.current && !closedByPopstateRef.current) {
+          pushedHistoryRef.current = false;
+          window.history.back();
+        }
       };
     }
-  }, [activeIndex]);
+  }, [activeIndex !== null]);
 
-  return (
+  const modalContent = (
     <AnimatePresence>
       {activeVideo && activeIndex !== null && (
         <motion.div
@@ -68,84 +94,114 @@ export const ReelLightbox: React.FC<{
           transition={{ duration: 0.2 }}
           onClick={onClose}
           data-lenis-prevent
-          className="fixed inset-0 z-[100] bg-black/92 backdrop-blur-2xl flex flex-col items-center justify-center p-4"
+          className="fixed inset-0 h-[100dvh] w-full z-[999] bg-black/95 backdrop-blur-2xl flex flex-col justify-between px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]"
         >
+          {/* Pinned Top Bar — Always visible above Navbar on every screen size */}
           <div
-            className="relative flex flex-col items-center justify-center w-full max-w-md max-h-[90vh]"
+            className="w-full max-w-lg mx-auto flex items-center justify-between gap-3 shrink-0 py-1 z-20"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-full max-w-[340px] flex items-center justify-between mb-3 px-1">
-              <span className="font-mono text-[11px] uppercase tracking-widest text-[#A1A1A6]">
-                Reel {String(activeIndex + 1).padStart(2, '0')} / {String(SHOWCASE_VIDEO_IDS.length).padStart(2, '0')}
-              </span>
-              <button
-                type="button"
-                onClick={onClose}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill text-xs text-white hover:bg-white hover:text-black transition-colors cursor-pointer"
-              >
-                <X size={13} /> Close
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/12 hover:bg-white hover:text-black border border-white/20 text-xs font-medium text-white transition-colors cursor-pointer"
+            >
+              <ArrowLeft size={14} />
+              <span>Back</span>
+            </button>
 
-            <div className="relative flex items-center justify-center w-full gap-3">
-              <button
-                type="button"
-                onClick={goPrev}
-                aria-label="Previous video"
-                className="hidden sm:flex w-9 h-9 shrink-0 rounded-full liquid-glass-pill hover:bg-white hover:text-black text-white items-center justify-center transition-colors cursor-pointer"
-              >
-                <ChevronLeft size={18} />
-              </button>
+            <span className="font-mono text-[11px] uppercase tracking-widest text-[#A1A1A6]">
+              Reel {String(activeIndex + 1).padStart(2, '0')} / {String(SHOWCASE_VIDEO_IDS.length).padStart(2, '0')}
+            </span>
 
-              <motion.div
-                key={activeVideo}
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                transition={{ duration: 0.22 }}
-                className="w-full max-w-[330px] h-[68vh] sm:h-[72vh] aspect-[9/16] rounded-[1.75rem] overflow-hidden bg-black border border-white/15 shadow-2xl"
-              >
-                <iframe
-                  src={`https://www.youtube.com/embed/${activeVideo}?autoplay=1&modestbranding=1&rel=0&controls=1&fs=1&playsinline=1`}
-                  title={`Social Spark Reel ${activeIndex + 1}`}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                />
-              </motion.div>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close video"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#F5F5F7] hover:bg-white text-black text-xs font-semibold transition-colors cursor-pointer shadow-lg"
+            >
+              <X size={14} />
+              <span>Close</span>
+            </button>
+          </div>
 
-              <button
-                type="button"
-                onClick={goNext}
-                aria-label="Next video"
-                className="hidden sm:flex w-9 h-9 shrink-0 rounded-full liquid-glass-pill hover:bg-white hover:text-black text-white items-center justify-center transition-colors cursor-pointer"
-              >
-                <ChevronRight size={18} />
-              </button>
-            </div>
+          {/* Center Elastic Video Container — Scales strictly inside remaining space */}
+          <div
+            className="flex-1 min-h-0 w-full flex items-center justify-center gap-4 py-2"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={goPrev}
+              aria-label="Previous video"
+              className="hidden sm:flex w-10 h-10 shrink-0 rounded-full liquid-glass-pill hover:bg-white hover:text-black text-white items-center justify-center transition-colors cursor-pointer"
+            >
+              <ChevronLeft size={18} />
+            </button>
 
-            <div className="flex sm:hidden items-center justify-center gap-3 mt-4">
-              <button
-                type="button"
-                onClick={goPrev}
-                className="px-4 py-1.5 rounded-full liquid-glass-pill text-white text-xs flex items-center gap-1"
-              >
-                <ChevronLeft size={14} /> Prev
-              </button>
-              <button
-                type="button"
-                onClick={goNext}
-                className="px-4 py-1.5 rounded-full liquid-glass-pill text-white text-xs flex items-center gap-1"
-              >
-                Next <ChevronRight size={14} />
-              </button>
-            </div>
+            <motion.div
+              key={activeVideo}
+              initial={{ scale: 0.96, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.96, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="h-full max-h-[76dvh] aspect-[9/16] max-w-full rounded-[1.5rem] overflow-hidden isolate bg-black border border-white/20 shadow-2xl"
+              style={{ clipPath: 'inset(0 round 1.5rem)' }}
+            >
+              <iframe
+                src={`https://www.youtube.com/embed/${activeVideo}?autoplay=1&modestbranding=1&rel=0&controls=1&fs=0&playsinline=1`}
+                title={`Social Spark Reel ${activeIndex + 1}`}
+                frameBorder="0"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                className="w-full h-full"
+              />
+            </motion.div>
+
+            <button
+              type="button"
+              onClick={goNext}
+              aria-label="Next video"
+              className="hidden sm:flex w-10 h-10 shrink-0 rounded-full liquid-glass-pill hover:bg-white hover:text-black text-white items-center justify-center transition-colors cursor-pointer"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+
+          {/* Pinned Bottom Bar for effortless thumb reach on Mobile */}
+          <div
+            className="w-full max-w-md mx-auto flex sm:hidden items-center justify-between gap-2.5 shrink-0 py-1 z-20"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={goPrev}
+              className="flex-1 py-2.5 rounded-full bg-white/10 border border-white/15 text-white text-xs font-medium flex items-center justify-center gap-1 cursor-pointer"
+            >
+              <ChevronLeft size={14} /> Prev
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 py-2.5 rounded-full bg-[#F5F5F7] text-black text-xs font-semibold flex items-center justify-center gap-1 cursor-pointer"
+            >
+              <X size={14} /> Close
+            </button>
+            <button
+              type="button"
+              onClick={goNext}
+              className="flex-1 py-2.5 rounded-full bg-white/10 border border-white/15 text-white text-xs font-medium flex items-center justify-center gap-1 cursor-pointer"
+            >
+              Next <ChevronRight size={14} />
+            </button>
           </div>
         </motion.div>
       )}
     </AnimatePresence>
   );
+
+  if (typeof document === 'undefined') return null;
+  return createPortal(modalContent, document.body);
 };
 
 const ReelPosterCard: React.FC<{
@@ -200,6 +256,7 @@ const ReelPosterCard: React.FC<{
               src={`https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&disablekb=1&modestbranding=1&playsinline=1&rel=0`}
               title={`Campaign Reel Autoplay ${index + 1}`}
               frameBorder="0"
+              referrerPolicy="strict-origin-when-cross-origin"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               className="absolute inset-0 w-full h-full pointer-events-none"
             />

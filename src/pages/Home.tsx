@@ -191,13 +191,14 @@ const Home = () => {
                       className="absolute inset-0 w-full h-full object-cover"
                     />
 
-                    {/* Auto-playing muted inline YouTube embed when Hero is visible */}
-                    {heroInView && (
+                    {/* Auto-playing muted inline YouTube embed when Hero is visible and Lightbox closed */}
+                    {heroInView && heroLightboxIndex === null && (
                       <iframe
                         key={activeHeroReel.id}
                         src={`https://www.youtube.com/embed/${activeHeroReel.id}?autoplay=1&mute=1&loop=1&playlist=${activeHeroReel.id}&controls=0&disablekb=1&modestbranding=1&playsinline=1&rel=0`}
                         title={`Social Spark Hero Autoplay Reel ${activeHeroReel.label}`}
                         frameBorder="0"
+                        referrerPolicy="strict-origin-when-cross-origin"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         className="absolute inset-0 w-full h-full pointer-events-none"
                       />
